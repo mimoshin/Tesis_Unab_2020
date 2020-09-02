@@ -1,0 +1,753 @@
+{% load static %}
+<!DOCTYPE html>
+<!-- saved from url=(0033)http://www.deportescerronavia.cl/ -->
+<html lang="en">
+    {% csrf_token %}
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+         <!-- Custom fonts for this template-->
+        <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    
+        <title>Corporación del Deporte Cerro Navia</title>
+
+        <meta property="og:image" content="{% static '/start_page/Logo_Deporte-17.png' %}">
+        <meta property="og:title" content="Corporación del Deporte Cerro Navia">
+
+
+        <link href="{% static 'start_page/css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="{% static '/start_page/site.css' %}">
+    
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script src="{% static '/start_page/649483342273530' %}" async=""></script>
+        <script src="{% static '/start_page/496598344188736' %}" async=""></script>
+        <script async="" src="{% static '/start_page/fbevents.js.descarga' %}"></script>
+        <script type="text/javascript" async="" src="{% static '/start_page/analytics.js.descarga' %}"></script>
+        <script async="" src="{% static '/start_page/gtm.js.descarga' %}"></script>
+        <script async="" src="{% static '/start_page/js' %}"></script>
+        <script async="" src="{% static '/start_page/analytics.js.descarga' %}"></script>
+    
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+         gtag('config', 'UA-115077435-1');
+        </script>
+        <!-- End Google Analytics -->
+
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-P6D82V6');</script>
+        <!-- End Google Tag Manager -->
+
+
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P6D82V6"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+    </head>
+
+    <body>
+    <div id="app">
+
+        <div id="mySidenav" class="sidenav visible-xs">
+            <a href="http://www.deportescerronavia.cl/login" class="left-input"><i aria-hidden="true" class="fa fa-user-o"></i>Ingresa aquí</a> 
+            <a href="javascript:void(0)" onclick="closeNav()" class="closebtn"><i aria-hidden="true" class="fa fa-times"></i></a> 
+            <div class="space-menu">
+                <a href="http://www.deportescerronavia.cl/"> <img src="{% static '/start_page/Logo_Deporte-17.png' %}"></a>
+            </div> 
+
+            <div class="buttons">
+                <a href="http://www.deportescerronavia.cl/nosotros">Nosotros <span><i aria-hidden="true" class="fa fa-plus-circle"></i></span></a> 
+                <a href="http://www.deportescerronavia.cl/categorias">Disciplinas <span><i aria-hidden="true" class="fa fa-plus-circle"></i></span></a> 
+                <a href="http://www.deportescerronavia.cl/publicaciones/eventos">Evento <span><i aria-hidden="true" class="fa fa-plus-circle"></i></span></a> 
+                <a href="http://www.deportescerronavia.cl/publicaciones/tercer-tiempo">Tercer Tiempo<span><i aria-hidden="true" class="fa fa-plus-circle"></i></span></a> 
+                <a href="http://www.deportescerronavia.cl/contacto">Contacto <span><i aria-hidden="true" class="fa fa-plus-circle"></i></span></a> 
+                <a href="http://www.deportescerronavia.cl/register">Inscríbete ahora <span><i aria-hidden="true" class="fa fa-plus-circle"></i></span></a>
+            </div>
+        </div> 
+
+        <div id="main">
+            <div class="fixed-menu visible-xs navbar-fixed-top">
+                <div class="container order-nav">
+
+                    <div onclick="openNav()" class="icon-menu">
+                        <div class="bar1"></div> 
+                        <div class="bar2"></div> 
+                        <div class="bar3"></div>
+                    </div> 
+
+                    <div class="icon-corporative">
+                        <a href="http://www.deportescerronavia.cl/"><img src="{% static '/start_page/Logo_Deporte-17.png' %}" class="img-responsive"></a>
+                    </div>
+                </div>
+            </div> 
+
+            <nav class="navbar navbar-default navbar-fixed-top  nav-default hidden-xs">
+                <div class="container-fluid">
+
+                    <div class="navbar-header">
+                        <button type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" class="navbar-toggle collapsed">
+                            <span class="sr-only">Toggle navigation</span> 
+                            <span class="icon-bar"></span> 
+                            <span class="icon-bar"></span> 
+                            <span class="icon-bar"></span>
+                        </button> 
+                        <a href="http://www.deportescerronavia.cl/" class="navbar-brand img-responsive"><img src="{% static '/start_page/Logo_Deporte-17.png' %}"></a>
+                    </div> 
+
+                    <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse nav-desktop">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="active"><a href="{% url 'inicio' %}">Inicio</a></li>
+                            <li>
+                                <a href="http://www.deportescerronavia.cl/nosotros">Nosotros </a>
+                            </li> 
+                            <li>
+                                <a href="http://www.deportescerronavia.cl/categorias">Disciplinas </a>
+                            </li>
+                            <li>
+                                <a href="http://www.deportescerronavia.cl/publicaciones/eventos">Eventos </a>
+                            </li> 
+                            <li>
+                                <a href="http://www.deportescerronavia.cl/publicaciones/tercer-tiempo">Tercer Tiempo </a>
+                            </li> 
+                            <li>
+                                <a href="http://www.deportescerronavia.cl/contacto">Contacto </a>
+                            </li> 
+
+                            {% ifequal usuario nousuario %}
+                            <li class="registrate">
+                                <a href="http://www.deportescerronavia.cl/register">Regístrate </a>
+                            </li> 
+                            <li class ="registrate">
+                                <a href="#">Ingresar </a>
+                            </li>
+                            {% else %}
+                            <li>
+                               <a href="#">Administracion</a>
+                            </li>
+                            {% endifequal %}
+                        </ul>
+                    </div>
+
+                </div>
+            </nav> 
+
+            <span class="hidden-xs">
+                <section class="content slider sld-home">
+                    <div class="info-taller">
+                        <div id="carrousel-slider-home" class="owl-carousel owl-theme owl-loaded owl-drag"> 
+                           
+                            <div class="owl-stage-outer">
+                                <div class="owl-stage" style="transform: translate3d(-4857px, 0px, 0px); transition: all 0s ease 0s; width: 9716px;">
+                                    
+                                    <div class="owl-item cloned" style="width: 1519.2px; margin-right: 100px;">
+                                        <a>
+                                            <div class="item" style="background: url(&quot;http://www.deportescerronavia.cl/uploads/banners/1576784046_aa0774351d20eda3775f2d0437acc56d.jpg&quot;) center center / cover no-repeat;">
+                                                <div class="info">
+                                                    <h2 style="color: rgb(109, 39, 129);"></h2> 
+                                                    <span style="color: rgb(0, 0, 0);"></span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="owl-item cloned" style="width: 1519.2px; margin-right: 100px;">
+                                        <a>
+                                            <div class="item" style="background: url(&quot;http://www.deportescerronavia.cl/uploads/banners/1554399176_9708815a6f2e31e7deb9f393c48cc216.jpg&quot;) center center / cover no-repeat;">
+                                                <div class="info">
+                                                    <h2 style="color: rgb(109, 39, 129);"> donde aparece esta wea por la chucha</h2> 
+                                                    <span style="color: rgb(0, 0, 0);"></span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="owl-item" style="width: 1519.2px; margin-right: 100px;">
+                                        <a>
+                                            <div class="item" style="background: url(&quot;http://www.deportescerronavia.cl/uploads/banners/1576784046_aa0774351d20eda3775f2d0437acc56d.jpg&quot;) center center / cover no-repeat;">
+                                                <div class="info">
+                                                    <h2 style="color: rgb(109, 39, 129);"></h2> 
+                                                    <span style="color: rgb(0, 0, 0);"></span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="owl-item active" style="width: 1519.2px; margin-right: 100px;">
+                                        <a>
+                                            <div class="item" style="background: url(&quot;http://www.deportescerronavia.cl/uploads/banners/1554399176_9708815a6f2e31e7deb9f393c48cc216.jpg&quot;) center center / cover no-repeat;">
+                                                <div class="info">
+                                                    <h2 style="color: rgb(109, 39, 129);"></h2> 
+                                                    <span style="color: rgb(0, 0, 0);"></span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <div class="owl-item cloned" style="width: 1519.2px; margin-right: 100px;">
+                                        <a>
+                                            <div class="item" style="background: url(&quot;http://www.deportescerronavia.cl/uploads/banners/1576784046_aa0774351d20eda3775f2d0437acc56d.jpg&quot;) center center / cover no-repeat;">
+                                                <div class="info">
+                                                    <h2 style="color: rgb(109, 39, 129);"></h2> 
+                                                    <span style="color: rgb(0, 0, 0);">
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- comente esta parte para que el carrousel no tuviera nada en blanco
+                                    <div class="owl-item cloned" style="width: 1519.2px; margin-right: 100px;">
+                                        <a>
+                                            <div class="item" style="background: url(&quot;http://www.deportescerronavia.cl/uploads/banners/1554399176_9708815a6f2e31e7deb9f393c48cc216.jpg&quot;) center center / cover no-repeat;">
+                                                <div class="info">
+                                                    <h2 style="color: rgb(109, 39, 129);"></h2> 
+                                                    <span style="color: rgb(0, 0, 0);">
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                </div>
+                                -->
+                            </div>
+
+                            <div class="owl-nav disabled">
+                                <div class="owl-prev">prev</div>
+                                <div class="owl-next">next</div>
+                            </div>
+                            
+                            <div class="owl-dots">
+                                <div class="owl-dot">
+                                    <span></span>
+                                </div>
+
+                                <div class="owl-dot active">
+                                    <span></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section> 
+                
+                <section class="workshop-section" style="background-image: url(&quot;http://www.deportescerronavia.cl/images/bg-disciplinas.jpg&quot;);">
+                    <div class="container">
+                        <h2 class="titulo-home titulo-princ title-home" style="text-align: right;">NUESTRAS<br><strong>DISCIPLINAS</strong></h2> 
+                        <div class="content-workshops">
+                            <div class="row">
+                                <div class="col-md-8 col-xs-8">
+
+                                    <a href="http://www.deportescerronavia.cl/disciplina/hockey_cesped" class="col-md-6 col-xs-6 ult-wrk">
+                                        <div class="box-gral-work-item">
+                                            <div class="over-hidde-img">
+                                                <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/workshop/1556922323_4fabec4bca9c3f77dc01e79765a22eac.jpg&quot;);">
+                                                </div> 
+                                                <div class="info-teacher">Cupos disponibles: 20 </div>
+                                            </div> 
+                                            
+                                            <div class="txt-item-work">
+                                                <h2 class="animable-element" style="opacity: 1;">Hockey Césped</h2> 
+                                                <p class="animable-element" style="opacity: 1;"></p>
+                                                <p>Los primeros orígenes del juego se remontan a lan... </p>
+                                            </div>
+                                        </div>
+                                    </a> 
+                                    
+                                    <a href="http://www.deportescerronavia.cl/disciplina/crosswork_estadio" class="col-md-6 col-xs-6 ult-wrk">
+                                        <div class="box-gral-work-item">
+                                            <div class="over-hidde-img">
+                                                <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/workshop/1556770490_78beba488f1c6414405884190e7cb1d9.jpg&quot;);">
+                                                </div> 
+                                                <div class="info-teacher">Cupos disponibles: 27 </div>
+                                            </div>
+
+                                             <div class="txt-item-work">
+                                                 {% if usuario %}
+                                                    <p class="animable-element" style="opacity: 1;">{{usuario}}</p> 
+                                                 {% else %}
+                                                    <h2 class="animable-element" style="opacity: 1;">CrossWork</h2> 
+                                                 {% endif %}
+                                                 
+                                                 <p class="animable-element" style="opacity: 1;"></p>
+                                                 <p>Esta es una de las frases con las que se presenta el Cros </p>
+                                            </div>
+                                        </div>
+                                    </a> 
+
+                                    <a href="http://www.deportescerronavia.cl/disciplina/voleibol_adulto" class="col-md-6 col-xs-6 ult-wrk">
+                                        <div class="box-gral-work-item">
+                                            <div class="over-hidde-img">
+                                                <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/workshop/1557004095_1472b57fada5e58c0ada0a0e243c02e5.jpg&quot;);">
+                                                </div> 
+                                                <div class="info-teacher">Cupos disponibles: 0 </div>
+                                            </div> 
+
+                                            <div class="txt-item-work">
+                                                <h2 class="animable-element" style="opacity: 1;">VOLEIBOL ADULTO</h2> 
+                                                <p class="animable-element" style="opacity: 1;"></p>
+                                                <p>El voleibol es un deporte que se practica en casi todo dia en cuarentena </p>
+                                            </div>
+                                        </div>
+                                    </a> 
+                                    
+                                    <a href="http://www.deportescerronavia.cl/disciplina/rugby_adulto" class="col-md-6 col-xs-6 ult-wrk">
+                                        <div class="box-gral-work-item">
+                                            <div class="over-hidde-img">
+                                                <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/workshop/1556810218_c773b19b1d1cc2fe41150a59ceb2910f.jpg&quot;);">
+                                                </div> 
+                                                <div class="info-teacher">Cupos disponibles: 10 </div>
+                                            </div> 
+                                            
+                                            <div class="txt-item-work">
+                                                <h2 class="animable-element" style="opacity: 1;">RUGBY ADULTO</h2>
+                                                 <p class="animable-element" style="opacity: 1;"></p>
+                                                 <p>El rugby​ es un deporte de contacto donde se enfrentan do... </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div> 
+                                    
+                                <div class="col-md-4 col-xs-4 no-padding">
+                                    <a href="http://www.deportescerronavia.cl/disciplina/futbol_fem_infantil" class="col-md-12 ult-wrk">
+                                        <div class="box-gral-work-item work-item-principal">
+                                            <div class="over-hidde-img">
+                                                <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/workshop/1556930738_a9e81db5b9c96d4673c7484fee64ae48.jpg&quot;);"></div>
+                                                 <div class="info-teacher">Cupos disponibles: 40</div>
+                                            </div> 
+                                            <div class="txt-item-work">
+                                                <h2 class="animable-element" style="opacity: 1;">FÚTBOL FEM. INFANTIL</h2> 
+                                                <p class="animable-element" style="opacity: 1;"></p>
+                                                <p>El fútbol es el deporte más popular del mundo, practicado por más de 270 millones de personas, n... </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div> 
+
+                            <a href="http://www.deportescerronavia.cl/categorias" class="btn-home">VER MÁS</a>
+                        </div>
+                    </div>
+                </section> 
+                
+                <section class="team-section" style="background-image: url(&quot;http://www.deportescerronavia.cl/images/bg-nosotros.jpg&quot;);">
+                    <div class="container">
+                        <div class="conten-team">
+                            <div class="col-md-6 col-xs-6 info-text-team">
+                                <h1>¿QUÉ NOS MOTIVA?</h1> 
+                                <p>Creemos que fomentar y difundir el deporte es fundamental para nuestra calidad de vida y salud, tanto fisica y mental, además creemos que el bienestar y el deporte son un derecho de todos y velamos para que toda la comunidad sea parte.</p> <br> 
+                                <a href="http://www.deportescerronavia.cl/nosotros" class="btn-home btn-white-in-home">LEER MÁS</a>
+                            </div> 
+
+                            <div class="col-md-6 col-xs-6 title-team">
+                                <h2 class="titulo-home titulo-princ title-home title-especial-shadow" style="text-align: right;">CERRO NAVIA<br> <strong>DEPORTES</strong></h2> 
+                                <a href="http://www.deportescerronavia.cl/equipo" class="btn-home btn-white-in-home border-black-light">CONOCE AL EQUIPO</a>
+                            </div>
+                        </div>
+                    </div>
+                </section> 
+                
+                <section class="posts-section" style="background-image: url(&quot;http://www.deportescerronavia.cl/images/foto-fondo-tercertiempo.jpg&quot;);">
+                    <div class="container">
+                        <h2 class="titulo-home titulo-princ title-home" style="text-align: left;">TERCER<br><strong>TIEMPO</strong></h2> 
+                        <div class="conten-posts">
+                            
+                            <div class="col-md-4 col-xs-4 no-padding">
+                                <a href="http://www.deportescerronavia.cl/tercer_tiempo/detalle/cancha_acuatica_19_20" class="col-md-12 ult-wrk">
+                                    <div class="box-gral-work-item work-item-principal item-posts-home-principal">
+                                        <div class="txt-item-work">
+                                            <span>19-12-2019 | Tercer tiempo</span> 
+                                            <h2 class="animable-element" style="opacity: 1;">Cancha Acuática 2019-2020</h2>
+                                            <p class="animable-element" style="opacity: 1;"></p>
+                                            <p>Vuelve el verano entretenido a Cerro... </p>
+                                        </div> 
+                                        <div class="over-hidde-img">
+                                            <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/news/1576785243_8a34f1a78c1faceef3d8fc08ad1794a1.jpeg&quot;);">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div> 
+                            
+                            <div class="col-md-8 col-xs-8">
+                                <a href="http://www.deportescerronavia.cl/tercer_tiempo/detalle/union_espanola_vs_union_la_calera" class="col-md-4 col-xs-4 ult-wrk">
+                                    <div class="box-gral-work-item item-posts-home">
+                                        <div class="over-hidde-img">
+                                            <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/news/1556921331_bff78b9518d723b0e88a522675bd9e53.jpeg&quot;);">
+                                            </div> 
+                                            <div class="info-teacher">03-05-2019 | Tercer tiempo</div>
+                                        </div> 
+                                        <div class="txt-item-work">
+                                            <h2>Unión Española v/s Unión La Calera </h2>
+                                        </div>
+                                    </div>
+                                </a> 
+                                
+                                <a href="http://www.deportescerronavia.cl/tercer_tiempo/detalle/inversion_gimnasio_estadio" class="col-md-4 col-xs-4 ult-wrk">
+                                    <div class="box-gral-work-item item-posts-home">
+                                        <div class="over-hidde-img">
+                                            <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/news/1556920834_7dc1555f25c695800482f1fcd4de304b.jpg&quot;);">
+                                            </div> 
+                                            <div class="info-teacher">03-05-2019 | Tercer tiempo</div>
+                                        </div> 
+                                        <div class="txt-item-work">
+                                            <h2>SERIE DE MEJORAS EN GIMNASIO Y ESTADIO </h2>
+                                        </div>
+                                    </div>
+                                </a> 
+                                
+                                <a href="http://www.deportescerronavia.cl/tercer_tiempo/detalle/cancha_loca_febrero" class="col-md-4 col-xs-4 ult-wrk">
+                                    <div class="box-gral-work-item item-posts-home">
+                                        <div class="over-hidde-img">
+                                            <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/news/1556917611_eaedacbae0248fe9f6d1bd5306c1ea2b.jpg&quot;);">
+                                            </div> 
+                                            <div class="info-teacher">31-01-2019 | Tercer tiempo</div>
+                                        </div>
+                                        <div class="txt-item-work">
+                                            <h2>Cancha Loca febrero </h2>
+                                        </div>
+                                    </div>
+                                </a> 
+                                
+                                <a href="http://www.deportescerronavia.cl/tercer_tiempo/detalle/piscina_municipal" class="col-md-4 col-xs-4 ult-wrk">
+                                    <div class="box-gral-work-item item-posts-home">
+                                        <div class="over-hidde-img">
+                                            <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/news/1556918955_77d3eb95dc502256e376d2560a95db05.jpg&quot;);">
+                                            </div> 
+                                            <div class="info-teacher">31-01-2019 | Tercer tiempo</div>
+                                        </div> 
+                                        <div class="txt-item-work">
+                                            <h2>Piscina municipal </h2>
+                                        </div>
+                                    </div>
+                                </a> 
+                                
+                                <a href="http://www.deportescerronavia.cl/tercer_tiempo/detalle/natacion_verano" class="col-md-4 col-xs-4 ult-wrk">
+                                    <div class="box-gral-work-item item-posts-home">
+                                        <div class="over-hidde-img">
+                                            <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/news/1556919049_09612869e3dfb89509d636ded7bd8285.jpeg&quot;);"></div> 
+                                            <div class="info-teacher">31-01-2019 | Tercer tiempo</div>
+                                        </div> 
+                                        <div class="txt-item-work">
+                                            <h2>NATACION  VERANO </h2>
+                                        </div>
+                                    </div>
+                                </a> 
+                            
+                                <a href="http://www.deportescerronavia.cl/eventos/detalle/primera_jornada_deporte_inclusivo" class="col-md-4 col-xs-4 ult-wrk">
+                                    <div class="box-gral-work-item item-posts-home">
+                                        <div class="over-hidde-img">
+                                            <div class="img img-r" style="background-image: url(&quot;http://www.deportescerronavia.cl/uploads/news/1540817895_f22679e9f50d6d2c27601db21b3f50d3.jpg&quot;);"></div> 
+                                            <div class="info-teacher">29-10-2018 | Eventos</div>
+                                        </div> 
+                                        <div class="txt-item-work">
+                                            <h2>Primera Jornada de Deporte Inclusivo </h2>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </span> 
+
+            <span class="visible-xs">
+                <section id="first-section" class="content">
+                    <img src="{% static 'start_page/home-home.jpg' %}" class="img-responsive"> 
+                    <div class="container">
+                        <div class="text-description">
+                            <div class="title">
+                                <h1>Fomentar y difundir</h1> 
+                                <span>El deporte y la actividad física</span>
+                            </div>
+                        </div>
+                    </div>
+                </section> 
+                
+                <section id="second-section" class="content">
+                    <img src="{% static 'start_page/nosotros-menu.jpg' %}" class="img-responsive"> 
+                    <div class="container">
+                        <div class="text-description align-left-section">
+                            <div class="text-description-section text-second-gral">
+                                <h1>Nosotros</h1> 
+                                <p>Buscamos brindar a todos los vecinos y vecinas variados talleres Deportivos y de Actividad Física para que puedan desarrollar habilidades de destrezas corporales, generar una vida más saludable y activa, que permita un desarrollo de mejora de su calidad de vida.  </p>
+                            </div>
+                        </div> 
+
+                        <div class="content-btn-full">
+                            <a href="http://www.deportescerronavia.cl/nosotros" class="btn-first btn-gral">Aprende más</a>
+                        </div>
+                    </div>
+                </section> 
+                
+                <section id="third-section" class="content">
+                    <img src="{% static 'start_page/disciplina-menu.jpg' %}" class="img-responsive"> 
+                    <div class="container">
+                        <div class="text-description align-left-section">
+                            <div class="text-description-section text-third-gral">
+                                <h1>Disciplina</h1> 
+                                <p>Te invitamos a conocer las variadas disciplinas, talleres y cursos que tenemos a disposición de todos nuestros vecinos y vecinas. ¡Inscríbete y mejora tu calidad de vida!</p>
+                            </div>
+                        </div> 
+
+                        <div class="content-btn-full">
+                            <a href="http://www.deportescerronavia.cl/categorias" class="btn-first btn-gral">Aprende más</a>
+                        </div>
+                    </div>
+                </section> 
+
+                <section id="four-section" class="content">
+                    <img src="{% static 'start_page/eventos-menu.jpg' %}" class="img-responsive"> 
+                    <div class="container">
+                        <div class="text-description align-left-section">
+                            <div class="text-description-section text-four-gral">
+                                <h1>Eventos</h1> 
+                                <p>Revisa las actividades especiales que la Corporación del Deporte organiza para todos sus vecinos. ¡Entérate e inscríbete, participa y comparte!</p>
+                            </div>
+                        </div> 
+
+                        <div class="content-btn-full">
+                            <a href="http://www.deportescerronavia.cl/publicaciones/eventos" class="btn-first btn-gral">Aprende más</a>
+                        </div>
+                    </div>
+                </section> 
+            
+                <section id="five-section" class="content">
+                    <img src="{% static 'start_page/tercer-tiempo-menu.jpg' %}" class="img-responsive"> 
+                    <div class="container">
+                        <div class="text-description align-left-section">
+                            <div class="text-description-section text-five-gral">
+                                <h1>Tercer tiempo</h1> 
+                                <p>Visita la sección Tercer tiempo y aprende más sobre todos los aspectos de la Corporación del Deporte, desde notas y artículos, hasta historias y experiencias de vida de nuestros vecinos y vecinas. ¡Entra, aprende y comparte!</p>
+                            </div>
+                        </div> 
+
+                        <div class="content-btn-full">
+                            <a href="http://www.deportescerronavia.cl/publicaciones/tercer-tiempo" class="btn-first btn-gral">Aprende más</a>
+                        </div>
+                    </div>
+                </section>
+            
+                <section id="six-section" class="content">
+                    <img src="{% static 'start_page/contacto-menu.jpg' %}" class="img-responsive"> 
+                    <div class="container">
+                        <div class="text-description align-left-section">
+                            <div class="text-description-section text-six-gral">
+                                <h1>Contacto</h1> 
+                                <p>Mantengamos el contacto.</p> 
+                                <ul>
+                                    <li>Número: (+562) 2667 6631</li> 
+                                    <li>Correo: contacto@deportescerronavia.cl</li> 
+                                    <li>Dirección: Mapocho Norte 8115, Cerro Navia. Stgo.</li>
+                                </ul> 
+                                
+                                <ul class="ul-rrss">
+                                    <li>
+                                        <a href="https://www.facebook.com/cerronaviadeporte/">
+                                            <i aria-hidden="true" class="fa fa-facebook"></i>
+                                        </a>
+                                    </li>
+                                     <li>
+                                         <a href="https://www.instagram.com/deportes_cerronavia/">
+                                        <i aria-hidden="true" class="fa fa-instagram"></i>
+                                        </a>
+                                    </li> 
+                                    <li><a href="http://www.deportescerronavia.cl/login">
+                                        <i aria-hidden="true" class="fa fa-user"></i>
+                                    </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div> 
+                        <div class="content-btn-full">
+                            <a href="http://www.deportescerronavia.cl/contacto" class="btn-first btn-gral">Contáctanos</a>
+                        </div>
+                    </div>
+                </section> 
+            
+                <footer>
+                    <div class="btn-register-taller">
+                        <a href="http://www.deportescerronavia.cl/register">Inscríbete ahora <span>
+                            <i aria-hidden="true" class="fa fa-plus-circle"></i></span>
+                        </a>
+                    </div>
+                </footer>
+            </span>
+        </div>
+    </div>
+    
+    <footer class="hidden-xs">
+        <div class="container">
+            <div class="col-md-2 col-xs-2">
+                <img src="{% static 'start_page/logo-blanco-cndeportes.png' %}" class="img-responsive">
+            </div>
+
+            <div class="col-md-8 text-fot col-xs-8">
+                <p>Llámanos al (+562) 26676631 o contáctanos en contacto@deportescerronavia.cl <br>
+                    Mapocho Norte 8115, Cerro Navia, Santiago </p>
+            </div>
+
+            <div class="col-md-2 col-xs-2">
+                <a href="http://www.cerronavia.cl/">
+                <img src="{% static 'start_page/logocerronavia-footer.png' %}" class="img-responsive">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+      <!-- Bootstrap core JavaScript-->
+        <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+        <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+      <!-- Core plugin JavaScript-->
+        <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+      <!-- Custom scripts for all pages-->
+        <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    <!-- Page level plugins -->
+        <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+
+    <!-- Page level custom scripts -->
+        <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+        <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+    
+    <!-- Scripts -->
+    <script src="{% static 'start_page/app.js.descarga' %}"></script>
+    <script type="text/javascript" id="">!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","496598344188736");fbq("track","PageView");</script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=496598344188736&amp;ev=PageView&amp;noscript=1"></noscript>
+
+    <script type="text/javascript" id="">!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","649483342273530");fbq("set","agent","tmgoogletagmanager","649483342273530");fbq("track","PageView");</script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=649483342273530&amp;ev=PageView&amp;noscript=1"></noscript>
+
+    <script type="text/javascript">
+
+    function openNav() {
+        document.getElementById("mySidenav").classList.add('margin-nav');
+        document.getElementById("main").classList.add('margin-nav');
+        document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    }
+
+    /* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
+    function closeNav() {
+        document.getElementById("mySidenav").classList.remove('margin-nav');
+        document.getElementById("main").classList.remove('margin-nav');
+        document.body.style.backgroundColor = "white";
+    }
+
+    </script>
+
+    <!--  sliders -->
+    <link href="{% static 'start_page/owl.carousel.css' %}" rel="stylesheet">
+    <script src="{% static 'start_page/owl.carousel.min.js' %}"></script>
+    
+    <script>
+	$('#carrousel-slider-home').owlCarousel({
+        loop:true,
+        dots:true,
+        margin:100,
+        nav:false,
+        animateOut: 'fadeOut',
+        autoplay: true,
+        slideSpeed : 3300,
+        paginationSpeed : 3000,
+        responsive:{
+            0:{
+                items:1
+            },
+            600:{
+                items:1
+            },
+            1000:{
+                items:1
+            }
+        }
+    });
+
+    var owl = $('#carrousel-disciplinas');
+    owl.owlCarousel({
+        loop: false,
+        autoplay: true,
+        items: 1,
+        animateOut: 'fadeOut',
+        slideSpeed : 3300,
+        paginationSpeed : 3000,
+
+    });
+
+
+
+    owl.on('drag.owl.carousel', function(event) {
+        var currentItem = event.item.index;
+        var src = $(event.target).find(".owl-item").eq(currentItem).find("div");
+
+        $(event.target).find(".owl-item").eq(currentItem+1).addClass('featured');
+        $(event.target).find(".owl-item").eq(currentItem).addClass('in-move');
+
+        $('.info-taller').removeClass('active-clicked'); 
+        $('.text-related-workshop').removeClass('active-clicked');
+        $('.content-gallery').removeClass('active-clicked'); 
+        $('#workshop-modify-container').removeClass('active-clicked');
+        $('.item img').removeClass('active-clicked');
+       
+    });
+    owl.on('dragged.owl.carousel', function(event) {
+        var currentItem = event.item.index;
+        $(event.target).find(".owl-item").eq(currentItem+1).removeClass('in-move');
+        $(event.target).find(".owl-item").eq(currentItem+1).removeClass('featured');
+        $('.visibility-content').removeClass('active-clicked');
+       
+    });
+
+    owl.on('changed.owl.carousel', function(event) {
+        var currentItem = event.item.index;
+        //remuevo 
+        $(event.target).find(".owl-item").eq(currentItem).removeClass('featured');
+        $(event.target).find(".owl-item").eq(currentItem).removeClass('in-move');
+
+       
+    });
+
+
+    var clickeado = false;
+    $(document).on('click', '.item', function(){
+        var id = $(this).attr('data-owl');
+        if (!clickeado) {    
+
+            n = $(this).index();
+            $('.info-taller').addClass('active-clicked'); 
+            $('.text-related-workshop').addClass('active-clicked');
+            $('.content-gallery').addClass('active-clicked'); 
+            $('#workshop-modify-container').addClass('active-clicked');
+            $('.item img').addClass('active-clicked');
+            $('#content-workshop-'+id).addClass('active-clicked');
+            clickeado = true;
+
+        } else {
+            clickeado = false;
+            $owl = $(".owl-carousel");
+            $owl.trigger("refresh.owl.carousel");
+            n = $(this).index();
+            $('#content-workshop-'+id).removeClass('active-clicked');
+            $('.info-taller').removeClass('active-clicked'); 
+            $('.text-related-workshop').removeClass('active-clicked');
+            $('.content-gallery').removeClass('active-clicked'); 
+            $('#workshop-modify-container').removeClass('active-clicked');
+            $('.item img').removeClass('active-clicked');
+        }   
+
+            
+    });
+
+    </script>
+    <!-- selector multiple --> 
+</body>
+</html>
