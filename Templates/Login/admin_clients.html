@@ -1,0 +1,78 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block active-clients %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}
+
+{% block page-heading-content %}
+  <div class="d-sm-flex align-items-center mb-0 "><!-- d-sm-flex (responsive) -->
+    <h1>Clientes</h1>
+    <a class="btn btn-primary btn-sm ml-auto " href="{% url 'registrar_cliente' %}" role="button"> Nuevo Cliente</a>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th> Nombre</th>
+        <th>Apellido</th>
+        <th>Correo</th>
+        <th>Staff</th>
+        <th>Opciones</th>
+      </tr>
+    </thead>
+    {% if kwargs %}
+      {% for x in kwargs %}
+        <thead>
+          <tr>
+            <th>{{x.client_person.first_name}}</th>
+            <th>{{x.client_person.last_name}}</th>
+            <th>{{x.client_person.email}}</th>
+            <th>{{x.corp}}</th>
+            <th>{{x.client_type}} </th>
+            <th>
+              <a class="btn btn-success btn-sm" href="modificar/{{x.client_person.pk}}" role="button"> Modificar </a>
+              <button class="btn btn-danger btn-sm " data-primary="{{x.client_person.pk}}" data-toggle="modal" 
+                      data-target="#eliminarModal" onclick="get_pk(this)">
+                      Elimina cliente
+              </button>
+            </th>
+          </tr>
+        </thead>
+      {% endfor %}
+    {% endif %}
+  </table>
+
+  <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">¿Desea eliminar este cliente?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">x</span>
+          </button>
+        </div>
+        <div class="modal-body">Presione "Si, estoy Seguro" para eliminar al cliente.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+          <form action="cualquier_wea" method="post">
+            {% csrf_token %}
+            <button class="btn btn-danger btn-ok"> Si, estoy Seguro</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function get_pk(element){
+      var pk = element.dataset['primary'];
+      var opcion1 = document.getElementsByTagName('form');
+      opcion1['0'].action = 'eliminar/'+pk
+    }   
+  </script>
+
+
+{% endblock %}
+
+

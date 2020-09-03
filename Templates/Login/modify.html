@@ -295,7 +295,7 @@
 
           {% if user %}
             <tr>
-              <td>Nombre | Apellido | Correo | Staff </td>
+              <td>Nombre | Apellido | Correo | Staff {{user}} </td> 
             </tr>
               <p>{{user.first_name}} | {{user.last_name}} | {{user.email}} | {{user.is_staff}}</p>
           {% endif %}

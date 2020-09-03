@@ -13,16 +13,17 @@ def load_message():
     messages_list = {"mensaje 1","mensaje 2","mensaje 3","mensaje 4","mensaje 5"}
     return messages_list
 
-def load_data(usuario):
-    messages = load_message()
-    notify = load_notify()
-    return {'profile':usuario,'notify':notify,'messages':messages}
+def load_data(usuario,kwargs = None):
+    u_messages = load_message()
+    u_notify = load_notify()
+    data = {'profile':usuario,'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
+    return data
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 #:::::::::::::::::::General_Views:::::::::::::::::
 
-#Start_page
+#Start_page_view
 def start(request):
     u_type = request.user
     if request.method == 'POST':
@@ -80,14 +81,14 @@ def register(request):
     Users = list(User.objects.all())
     if request.method == 'POST':
         print("POST: register ---- RECEPCIONANDO INSCRIPCIÓN")
-        b = User(username=request.POST["username"],first_name=request.POST["first_name"],
+        reg = User(username=request.POST["username"],first_name=request.POST["first_name"],
                 last_name=request.POST["last_name"],email=request.POST["email"])
-        b.set_password(request.POST["password"])
-        b.save()
+        reg.set_password(request.POST["password"])
+        reg.save()
 
     if request.method == 'GET':
-        return render(request,'login/register.html',{"users_list":Users})
-    return render(request,'login/register.html',{"users_list":Users})
+        return render(request,'login/register_user.html',{"users_list":Users})
+    return render(request,'login/register_user.html',{"users_list":Users})
 
 #Modifiy_user_view
 def modify(request,pkid):
@@ -103,7 +104,7 @@ def modify(request,pkid):
             selected_user.email = request.POST['email']
         selected_user.save()
         #Validar formulario
-        return redirect('index')
+        return redirect('adm_clientes')
     if request.method == 'GET':
         print("GET: modify ---- selecionado el usuario ",selected_user.first_name)
         return render(request,'login/modify.html',{"user":selected_user})
@@ -127,7 +128,7 @@ def user_logout(request):
 
 #:::::::::::::::::::Admin_Views:::::::::::::::::::
 
-#Admin_index_view
+#index_view
 def index_admin(request):
     data = load_data(request.user)
     if request.method == 'POST':
@@ -135,6 +136,66 @@ def index_admin(request):
     if request.method == 'GET':
         pass
     return render(request,'base_admin.html',data)
+
+#index_module_client_view
+def admin_clients(request):
+    users_list = Client.objects.all()
+    data = load_data(request.user,users_list)
+    if request.method == 'POST':
+        pass
+    if request.method == 'GET':
+        pass
+    return render(request,'login/admin_clients.html',data)
+
+#Register_new_client_view
+def new_client(request):
+    data = load_data(request.user)
+    if request.method == 'POST':
+        aux = request.POST
+        new_user = User(username=aux['username'], first_name=aux['first_name'], 
+                        last_name=aux['last_name'], email=aux['email'])
+        new_user.set_password(aux["password"])
+        new_user.save()
+
+        new_client = Client(client_person=new_user, corp=aux['corp'], client_type=aux['type'])
+        new_client.save()
+        return redirect('adm_clientes')
+        
+    if request.method == 'GET':
+        return render(request,'login/new_client.html',data)
+    return render(request,'login/new_client.html',data)
+
+#Modify_client_view | modificando datos basicos del usuario
+@login_required(login_url='/')
+def modify_client(request,pk_id):
+    aux_client = Client.objects.get(client_person__pk=pk_id)
+    selected_user = aux_client.client_person
+    
+    data = load_data(request.user,selected_user)
+    if request.method == 'POST':
+        if request.POST['first_name']:
+            selected_user.first_name = request.POST['first_name']
+        if request.POST['last_name']:
+            selected_user.last_name = request.POST['last_name']
+            print("apellido",selected_user.last_name)
+        if request.POST['email']:
+            selected_user.email = request.POST['email']
+        selected_user.save()
+        #Validar formulario
+        return redirect('adm_clientes')
+    if request.method == 'GET':
+        return render(request,'login/modify_client.html',data)
+    return render(request,'login/modify_client.html',data)
+
+#Delete_client_view
+def delete_client(request,pk_id):
+    aux_client = Client.objects.get(client_person__pk=pk_id)
+    if request.method == 'POST':
+        pass
+    if request.method == 'GET':
+        pass
+    print("quiero eliminar al usuario",aux_client)
+    return redirect('adm_clientes')
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 

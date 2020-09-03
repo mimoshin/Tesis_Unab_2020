@@ -1,0 +1,49 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page-heading-content %}
+  <!-- Begin Page Content -->
+  <div class="container-fluid">        
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-0">
+      <h1 class="h3 mb-0 text-gray-800">Modificar</h1>
+    </div>
+    
+    {% if kwargs %}
+    <tr>
+      <td>Nombre | Apellido | Correo | staff </td>
+    </tr>
+    <p>{{kwargs.first_name}} | {{kwargs.last_name}} | {{kwargs.email}} | {{user}}</p>
+    {% endif %}
+
+    <form class='user' method="post" action="/modificar/{{kwargs.pk}}">
+      {% csrf_token %}
+      <div class="form-group">
+        <input type="text" class="form-control form-control-user" name="first_name" placeholder="Nombre">
+      </div> 
+      
+      <div class="form-group">
+        <input type="text" class="form-control form-control-user"  name="last_name" placeholder="Apellido">
+      </div> 
+      
+      <div class="form-group">
+          <input type="text" class="form-control form-control-user" name="email" placeholder="Correo Electronico">
+      </div> 
+
+      <div class="form-group">
+        {% if messages %}
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      </div>
+      
+      <button type="submit" class ="btn btn-primary btn-user btn-block">Modificar</button>
+        <hr>
+    </form>
+  </div>
+{% endblock %}
+
+{% block active-clients %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

@@ -20,3 +20,11 @@ class Client(models.Model):
     def __str__(self):
         return ("Cliente: {0} | Institución {1} | tipo: {2}".format(self.client_person.first_name,self.corp,self.client_type))
 
+"""
+django.admin.contrib.auth.models.user 
+username
+password
+first_name
+last_name
+email
+"""
