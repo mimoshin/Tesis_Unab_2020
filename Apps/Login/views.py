@@ -2,9 +2,21 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser, User
-
+from django.contrib.auth.decorators import login_required
+from .models import Admin, Client
 #:::::::::::::::::::Functions:::::::::::::::::::::
+def load_notify():
+    notify_list = ["notificacion 1","notificacion 2","notificacion 3","notificacion 4","notificacion 5"]
+    return notify_list
 
+def load_message():
+    messages_list = {"mensaje 1","mensaje 2","mensaje 3","mensaje 4","mensaje 5"}
+    return messages_list
+
+def load_data(usuario):
+    messages = load_message()
+    notify = load_notify()
+    return {'profile':usuario,'notify':notify,'messages':messages}
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
@@ -12,17 +24,19 @@ from django.contrib.auth.models import AnonymousUser, User
 
 #Start_page
 def start(request):
+    u_type = request.user
     if request.method == 'POST':
         pass
     if request.method == 'GET':
-        pass
-    aux = str(request.user)
-    print(aux)
-    return render(request,'start_page.html')
+        if u_type == AnonymousUser():
+            u_type = 'anonimo'
+        else:
+            pass
+
+    return render(request,'start_page.html',{'user':u_type})
 
 #Login_view
 def entry(request):
-
     if request.method == 'POST':
         username,password = request.POST['username'],request.POST['password']
         user_auth = authenticate(username=username,password=password)# T:User | F:None 
@@ -42,11 +56,23 @@ def entry(request):
     return render(request,'login/login.html')
 
 #Index_page_view
+@login_required(login_url='/')
 def index(request):
+    user_log = request.user
+    admin = Admin.objects.filter(admin_person__username = user_log ).exists()
+    client = Client.objects.filter( client_person__username = user_log ).exists()
+
     if request.method == 'POST':
-        pass
+        if admin:
+            return index_admin(request)
+        if client:
+            return index_client(request)
     if request.method == 'GET':
-        pass
+        if admin:
+            return index_admin(request)
+        if client:
+            return index_client(request)
+
     return render(request,'login/index.html')
 
 #Inscription_user_view
@@ -101,10 +127,26 @@ def user_logout(request):
 
 #:::::::::::::::::::Admin_Views:::::::::::::::::::
 
+#Admin_index_view
+def index_admin(request):
+    data = load_data(request.user)
+    if request.method == 'POST':
+        pass
+    if request.method == 'GET':
+        pass
+    return render(request,'base_admin.html',data)
+
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 #:::::::::::::::::::Client_Views::::::::::::::::::
+def index_client(request):
+    data = load_data(request.user)
+    if request.method == 'POST':
+        pass
+    if request.method == 'GET':
+        pass
+    return render(request,'base_client.html',data)
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 

@@ -121,16 +121,16 @@
                                 <a href="http://www.deportescerronavia.cl/contacto">Contacto </a>
                             </li> 
 
-                            {% ifequal usuario nousuario %}
+                            {% ifequal user 'anonimo' %}
                             <li class="registrate">
                                 <a href="http://www.deportescerronavia.cl/register">Regístrate </a>
                             </li> 
                             <li class ="registrate">
-                                <a href="#">Ingresar </a>
+                                <a href="/ingreso">Ingresar </a>
                             </li>
                             {% else %}
                             <li>
-                               <a href="#">Administracion</a>
+                               <a href="/ingreso">Plataforma</a>
                             </li>
                             {% endifequal %}
                         </ul>
