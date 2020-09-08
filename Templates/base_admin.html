@@ -63,7 +63,7 @@
 
         <li class="nav-item active">
           <button class="btn btn-sm btn-warning my-1 btn-block d-flex">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'requests_views' %}">
               <i class="fas fa-fw fa-paper-plane"></i>
               <span>Solicitudes</span>
             </a>
@@ -188,7 +188,7 @@
               <!-- Nav Item - User Information -->
               <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{profile}}</span>
+                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{user.first_name}} {{user.last_name}}</span>
                   <img class="img-profile rounded-circle" src="{% static 'img/admin_icon.png' %}">
                 </a>
   
@@ -218,7 +218,7 @@
           <!-- End of Topbar -->
 
           <!-- Begin Page Content -->
-          <div class="container-fluid " >
+          <div class="container-fluid">
             {% block page-heading-content %}          
             <!--first_content_row 
             <div class="row">
@@ -287,6 +287,10 @@
       </div>
     </div>
 
+    <!-- JQuery Google Hosted Libraries
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    -->
+
     <!-- Bootstrap core JavaScript-->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -299,9 +303,5 @@
 
     <!-- Page level plugins -->
     <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
-    <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
   </body>
 </html>

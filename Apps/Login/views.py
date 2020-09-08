@@ -18,6 +18,12 @@ def load_data(usuario,kwargs = None):
     u_notify = load_notify()
     data = {'profile':usuario,'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
     return data
+
+def load_data_2(kwargs = None):
+    u_messages = load_message()
+    u_notify = load_notify()
+    data = {'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
+    return data
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
@@ -130,7 +136,7 @@ def user_logout(request):
 
 #index_view
 def index_admin(request):
-    data = load_data(request.user)
+    data = load_data_2()
     if request.method == 'POST':
         pass
     if request.method == 'GET':
@@ -140,7 +146,7 @@ def index_admin(request):
 #index_module_client_view
 def admin_clients(request):
     users_list = Client.objects.all()
-    data = load_data(request.user,users_list)
+    data = load_data_2(users_list)
     if request.method == 'POST':
         pass
     if request.method == 'GET':
@@ -149,7 +155,7 @@ def admin_clients(request):
 
 #Register_new_client_view
 def new_client(request):
-    data = load_data(request.user)
+    data = load_data_2()
     if request.method == 'POST':
         aux = request.POST
         new_user = User(username=aux['username'], first_name=aux['first_name'], 
@@ -171,7 +177,7 @@ def modify_client(request,pk_id):
     aux_client = Client.objects.get(client_person__pk=pk_id)
     selected_user = aux_client.client_person
     
-    data = load_data(request.user,selected_user)
+    data = load_data_2(selected_user)# reemplazo de load_data
     if request.method == 'POST':
         if request.POST['first_name']:
             selected_user.first_name = request.POST['first_name']

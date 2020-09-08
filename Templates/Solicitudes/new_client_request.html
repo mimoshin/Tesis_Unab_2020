@@ -1,0 +1,46 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+{% block page-heading-content %}
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-0">
+    <h1 class="h3 mb-0 text-gray-800">Nueva Solicitud</h1>
+  </div>
+  
+  <form class='user' method="post" action="{% url 'new_request' %}">
+    {% csrf_token %}
+
+    <!--Default date and time picker -->
+<div class="form-group pmd-textfield pmd-textfield-floating-label">
+	<label class="control-label" for="datetimepicker-default">Select Date and Time</label>
+	<input type="text" id="datetimepicker-default" class="form-control" />
+</div>
+
+    <div class="col-12"> 
+        <div class="form-group">
+            <textarea name="readya_text" id="body_request" cols="130" rows="10" placeholder="Especifique detalles..."></textarea>
+        </div>  
+    </div>
+
+    <button type="submit" class ="btn btn-primary btn-user btn-block">Generar Solicitud</button>
+    <hr>
+  </form>
+
+<!-- jquery JS -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+
+<!-- Bootstrap js -->
+<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+	// Default date and time picker
+	$('#datetimepicker-default').datetimepicker();
+</script>
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

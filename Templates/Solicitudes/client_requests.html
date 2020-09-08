@@ -1,0 +1,44 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+
+{% block page-heading-content %}
+  <div class="d-sm-flex align-items-center mb-0 "><!-- d-sm-flex (responsive) -->
+    <h1>Mis Solicitudes (Cliente) </h1>
+    <a class="btn btn-primary btn-sm ml-auto " href="{% url 'new_request' %}" role="button"> Nueva Solicitud</a>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th> Numero </th>
+        <th> Solicitud</th>
+        <th> Estado </th>
+        
+      </tr>
+    </thead>
+    {% if kwargs %}
+      {% for x in kwargs %}
+        <thead>
+          <tr>
+            <th class="table-success"> {{x.pk}}</th>
+            <th class="table-success"> {{x.text}}</th>
+            <th class=" table-success">{{x.status}}</th>
+            <th>
+              {% if x.modify_button %}
+                  <a class="btn btn-success btn-sm" href="#" role="button"> modificar </a>
+              {% endif %}
+            </th>
+          </tr>
+        </thead>
+      {% endfor %}
+    {% endif %}
+  </table>
+
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}
+
+

@@ -1,0 +1,48 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page-heading-content %}
+  <div class="d-sm-flex align-items-center mb-0 "><!-- d-sm-flex (responsive) -->
+    <h1>Solicitudes (Admin)</h1>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th> Numero </th>
+        <th> Usuario</th>
+        <th> Solicitud</th>
+        <th> Fecha</th>
+        <th> Zona</th>
+        <th> Estado </th>
+        
+        
+      </tr>
+    </thead>
+    {% if kwargs %}
+      {% for x in kwargs %}
+        <thead>
+          <tr>
+            <th class="table-success"> {{x.pk}}</th>
+            <th class="table-success"> {{x.petitioner}}</th>
+            <th class="table-success"> {{x.text}}</th>
+            <th class="table-success"> {{x.time_create}}</th>
+            <th class="table-success"> multicancha</th>
+            <th class=" table-success">{{x.status}}</th>
+            <th>
+              <a class="btn btn-success btn-sm" href="{% url 'review_request' x.pk %}" role="button"> Revisar </a>
+            </th>
+          </tr>
+        </thead>
+      {% endfor %}
+    {% endif %}
+  </table>
+
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}
+
+
+

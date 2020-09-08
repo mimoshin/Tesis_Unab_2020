@@ -31,7 +31,7 @@
             <th>{{x.corp}}</th>
             <th>{{x.client_type}} </th>
             <th>
-              <a class="btn btn-success btn-sm" href="modificar/{{x.client_person.pk}}" role="button"> Modificar </a>
+              <a class="btn btn-success btn-sm" href="{% url 'modify_client' x.client_person.pk %}" role="button"> Modificar </a>
               <button class="btn btn-danger btn-sm " data-primary="{{x.client_person.pk}}" data-toggle="modal" 
                       data-target="#eliminarModal" onclick="get_pk(this)">
                       Elimina cliente
@@ -47,7 +47,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">¿Desea eliminar este cliente?</h5>
+          <h5 class="modal-title" >¿Desea eliminar este cliente?</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">x</span>
           </button>
@@ -55,7 +55,7 @@
         <div class="modal-body">Presione "Si, estoy Seguro" para eliminar al cliente.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-          <form action="cualquier_wea" method="post">
+          <form action="action" method="post">
             {% csrf_token %}
             <button class="btn btn-danger btn-ok"> Si, estoy Seguro</button>
           </form>
@@ -68,7 +68,7 @@
     function get_pk(element){
       var pk = element.dataset['primary'];
       var opcion1 = document.getElementsByTagName('form');
-      opcion1['0'].action = 'eliminar/'+pk
+      opcion1['0'].action = "{% url 'delete_client' 0 %}".replace('0',pk);
     }   
   </script>
 

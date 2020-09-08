@@ -1,0 +1,96 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page-heading-content %}
+  <div class="d-sm-flex align-items-center mb-0 "><!-- d-sm-flex (responsive) -->
+    <h1>Solicitudes (Admin)</h1>
+    <button class="btn btn-info btn-sm ml-auto" onclick="question('rev')">Pendiente</button>
+    <button class="btn btn-warning btn-sm mr-2 ml-2" onclick="question('obs')">Observación</button>
+    <button class="btn btn-success btn-sm mr-2" onclick="question('accept')">Aprobar</button>
+    <button class="btn btn-danger btn-sm mr-2" onclick="question('reject')" >Rechazar</button>
+  </div>
+
+  {% csrf_token %}
+    {% if kwargs %}
+        <p>Autor :
+          {{kwargs.petitioner.first_name}} {{kwargs.petitioner.last_name}}
+        </p> 
+
+        <p>Club :
+          Colo-Colo
+        </p> 
+
+        <p>Zona :
+          multicancha
+        </p> 
+
+        <p>Hora inicio :
+          16:00 hrs
+        </p> 
+
+        <p>Hora fin :
+          20:00 hrs
+        </p> 
+
+        <p>Estado:
+          {{kwargs.status}}
+        </p>
+
+        <p>Fecha:
+          {{kwargs.time_create}}
+        </p>
+
+        <h5 class="card-title">Especificación:</h5>
+        <div class="card" style="width: 25rem;">
+          <div class="card-body">     
+            <p class="card-text">{{kwargs.text}}</p>
+          </div>
+        </div>
+    {% endif %}
+
+  
+  <script type="text/javascript">
+  
+    function change_status(status,id){
+      $.ajax({
+        type: "POST",
+        url: "{% url 'review_request' 0 %}".replace('0',id),
+        data: {"estado": status,"csrfmiddlewaretoken": "{{csrf_token}}",},
+        success:function(response){
+          window.location = '/solicitudes';
+        }
+        });
+    }
+
+    function question(b_type){
+      if (b_type == 'rev'){
+          var x = new Date()
+          console.log('{{kwargs.text}}');
+          alert("¿Esta seguro de dejarla pendiente?");
+          change_status('Pendiente','{{kwargs.pk}}');   
+      }
+      else if (b_type == 'obs'){
+          //console.log('{{kwargs.observation}}');
+          change_status("En observacion",'{{kwargs.pk}}');
+          alert("¿Esta seguro generar una observación?");
+      }
+      else if (b_type == 'accept'){
+          //console.log('{{kwargs.status}}');
+          change_status("Aprobado",'{{kwargs.pk}}');
+          alert("¿Esta seguro de aceptarla?");
+      }
+      else if (b_type == 'reject'){
+          //console.log('{{kwargs.petitioner}}');
+          change_status("Rechazado",'{{kwargs.pk}}');
+          alert("¿Esta seguro rechazarla?");
+      }
+    }
+  </script>
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}
+
+
+
