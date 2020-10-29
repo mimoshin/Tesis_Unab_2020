@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from .models import Event_Request
 from Login.models import Admin,Client
 
+
 #:::::::::::::::::::Functions:::::::::::::::::::::
 def load_notify():
     notify_list = ["notificacion 1","notificacion 2","notificacion 3","notificacion 4","notificacion 5"]
@@ -11,10 +12,10 @@ def load_message():
     messages_list = {"mensaje 1","mensaje 2","mensaje 3","mensaje 4","mensaje 5"}
     return messages_list
 
-def load_data(usuario,kwargs = None):
+def load_data(user,kwargs = None):
     u_messages = load_message()
     u_notify = load_notify()
-    data = {'profile':usuario,'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
+    data = {'profile':user,'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
     return data
 
 def load_data_2(kwargs = None):
@@ -22,6 +23,10 @@ def load_data_2(kwargs = None):
     u_notify = load_notify()
     data = {'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
     return data
+
+def load_client(user):
+    client = Client.objects.get(client_person=user)
+    return client
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
@@ -41,7 +46,6 @@ def requests_view(request):
             return admin_requests(request)
         if client:
             return client_requests(request)
-
     return redirect('/')
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
@@ -82,7 +86,7 @@ def review_request(request,pk_id):
 #Client_request_view
 def client_requests(request):
     pk = request.user.pk
-    requests_list = Event_Request.objects.filter(petitioner__pk=pk)
+    requests_list = Event_Request.objects.filter(petitioner__client_person__pk=pk)
     data = load_data_2(requests_list)
     if request.method == 'POST':
         pass
@@ -90,16 +94,31 @@ def client_requests(request):
         pass
     return render(request,'Solicitudes/client_requests.html',data)
 
-#New_request
-def new_request(request):
+#New_event_request
+def new_event_request(request):
     data = load_data_2()
     if request.method == 'POST':
-        n_request = Event_Request(petitioner= request.user,text=request.POST['readya_text'],status="Necesita revision")
+        r_form = request.POST
+        client = load_client(request.user)
+        n_request = Event_Request(petitioner=client,event_title=r_form['event_title'],event_type=r_form['event_type'],event_place=r_form['event_place'],event_date=r_form['event_date'],
+                    init_hour=r_form['init_hour'],finish_hour=r_form['finish_hour'], text=r_form['spe_ev'],status="Necesita revision")  
         n_request.save()
+        print(r_form)
+        print(r_form['event_date'],r_form['init_hour'],r_form['finish_hour'])
         return redirect('requests_views')
     if request.method == 'GET':
         pass
-    return render(request,'Solicitudes/new_client_request.html',data)
+    return render(request,'Solicitudes/new_client_e_request.html',data)
+
+#New_info_request
+def New_info_request(request):
+    data = load_data_2()
+    if request.method == 'POST':
+        r_form = request.POST
+        return redirect('requests_views')
+    if request.method == 'GET':
+        pass
+    return render(request,'Solicitudes/new_client_i_request.html',data)
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 

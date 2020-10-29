@@ -21,7 +21,7 @@ class Client(models.Model):
         return ("Cliente: {0} | Institución {1} | tipo: {2}".format(self.client_person.first_name,self.corp,self.client_type))
 
 """
-django.admin.contrib.auth.models.user 
+django.admin.contrib.auth.models.user cl
 username
 password
 first_name

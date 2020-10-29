@@ -2,70 +2,74 @@
 {% load static %}
 
 {% block page-heading-content %}
-  <div class="d-sm-flex align-items-center mb-0 "><!-- d-sm-flex (responsive) -->
-    <h1>Solicitudes (Admin)</h1>
-    <button class="btn btn-info btn-sm ml-auto" onclick="question('rev')">Pendiente</button>
-    <button class="btn btn-warning btn-sm mr-2 ml-2" onclick="question('obs')">Observación</button>
-    <button class="btn btn-success btn-sm mr-2" onclick="question('accept')">Aprobar</button>
-    <button class="btn btn-danger btn-sm mr-2" onclick="question('reject')" >Rechazar</button>
+  <div class="d-sm-flex align-items-center mb-2 "><!-- d-sm-flex (responsive) -->
+    <h1>Solicitud: {{kwargs.event_title}}</h1>
+    {% ifequal kwargs.status 'Rechazado' %} 
+      <a class="btn btn-info btn-sm ml-auto" href="{% url 'requests_views' %}">Volver</a>
+    {% else %}
+      <button class="btn btn-info btn-sm ml-auto" id="pending" onclick="question('rev')">Pendiente</button>
+      <button class="btn btn-warning btn-sm mr-2 ml-2" id="obs" onclick="question('obs')">Observación</button>
+    {% endifequal %}
+    
   </div>
 
   {% csrf_token %}
-    {% if kwargs %}
-        <p>Autor :
-          {{kwargs.petitioner.first_name}} {{kwargs.petitioner.last_name}}
-        </p> 
+  {% if kwargs %}
+    <div class="d-flex">
+      <h4>Autor:</h4>
+      <p class="ml-2 mt-1 mr-4">{{kwargs.petitioner.client_person.first_name}} {{kwargs.petitioner.client_person.last_name}} &nbsp;</p>
+      
+      <h4>Club:</h4>
+      <p class="ml-2 mt-1"> {{kwargs.petitioner.corp}}</p>
+      <h4>Fecha de creacion:</h4>
+    <p class="ml-2 mt-1 mr-4">{{kwargs.time_create}}</p>
+    </div>
+    
+    
+    <div class="d-flex">
+      <h4>Fecha solicitada:</h4>
+      <p class="ml-2 mt-1 mr-4">{{kwargs.event_date}}</p>
+      
+      <h4>Hora inicio :</h4>
+      <p class="ml-2 mt-1 mr-4">{{kwargs.init_hour}}</p>
 
-        <p>Club :
-          Colo-Colo
-        </p> 
+      <h4>Hora fin :</h4>
+      <p class="ml-2 mt-1 mr-4">{{kwargs.finish_hour}}</p>
+    </div>
 
-        <p>Zona :
-          multicancha
-        </p> 
+    <div class="d-flex">
+      <h4 >Zona:</h4>
+        <p class="ml-2 mt-1 mr-4">{{kwargs.event_place}}</p>
+    </div>
 
-        <p>Hora inicio :
-          16:00 hrs
-        </p> 
+    <div class="d-flex">
+      <h4>Estado:</h4>
+      <p class="ml-2 mt-1 mr-4">{{kwargs.status}}</p>
+      
+      
+    </div>
 
-        <p>Hora fin :
-          20:00 hrs
-        </p> 
+    <div class="d-flex">
+      <h4>Especificación:</h4>
+      <p class="ml-2 mt-1 mr-4">{{kwargs.text}}</p>
+    </div>
+  {% endif %}
 
-        <p>Estado:
-          {{kwargs.status}}
-        </p>
-
-        <p>Fecha:
-          {{kwargs.time_create}}
-        </p>
-
-        <h5 class="card-title">Especificación:</h5>
-        <div class="card" style="width: 25rem;">
-          <div class="card-body">     
-            <p class="card-text">{{kwargs.text}}</p>
-          </div>
-        </div>
-    {% endif %}
-
+  <div class="d-flex" id="ac_button">
+  </div>
   
+
   <script type="text/javascript">
-  
     function change_status(status,id){
-      $.ajax({
-        type: "POST",
-        url: "{% url 'review_request' 0 %}".replace('0',id),
-        data: {"estado": status,"csrfmiddlewaretoken": "{{csrf_token}}",},
-        success:function(response){
-          window.location = '/solicitudes';
-        }
-        });
+      $.post("{% url 'review_request' 0 %}".replace('0',id),
+          {"estado": status,"csrfmiddlewaretoken": "{{csrf_token}}",},
+          function(response){
+            window.location = '/solicitudes';});
     }
-
+  
     function question(b_type){
       if (b_type == 'rev'){
           var x = new Date()
-          console.log('{{kwargs.text}}');
           alert("¿Esta seguro de dejarla pendiente?");
           change_status('Pendiente','{{kwargs.pk}}');   
       }
@@ -85,6 +89,15 @@
           alert("¿Esta seguro rechazarla?");
       }
     }
+
+    $(document).ready(function(){
+       if('{{kwargs.status}}' == 'Rechazado'){}
+       else if('{{kwargs.status}}' == 'Rechazado'){}
+       else{
+        buttons= $('#ac_button');
+        buttons.html('<button class="btn btn-success btn-sm mr-2" onclick="question("accept")">Aprobar</button><button class="btn btn-danger btn-sm" onclick="question("reject")" >Rechazar</button>');
+       }     
+    });
   </script>
 {% endblock %}
 

@@ -1,0 +1,310 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block head %}
+{% endblock %}
+
+{% block page-heading-content %}
+  <div class="calendar num mb-2">
+    <div class="container">
+      <a href="{% url 'logistic_view' %}?month={{next}}" class="btn btn-sm btn-primary float-right ml-1">Next</a> </th>
+      <a href="{% url 'logistic_view' %}?month={{prev}}" class="btn btn-sm btn-primary float-right">Prev</a> </th>    
+    </div>
+      {{calendar|safe}}
+  </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Lista de eventos </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="overflow-y: scroll;max-height: 300px;">
+        <table class="table_hours">
+          <thead>
+            <tr>
+              <th style="width: 130px;">Horario</th>
+              <th style="width: 80px;">Multicancha</th>
+              <th style="width: 80px;">Piscina</th>
+              <th style="width: 80px;">Cancha Sintetica</th>
+              <th style="width: 80px;">Pista Atlética</th>
+              <th style="width: 80px;">Gimnasio completo</th>
+              <th style="width: 80px;">Lugar externo</th>
+            </tr>
+          </thead>
+          <tbody class="body_hours">
+            <!--Day hour-->
+            {% for x in hours %}
+              <tr>
+                <td class="table-info" style="text-align: center;">{{x}}</td>
+                <!--Multicancha-->
+                {% if events.0 %} 
+                  <td>{{events.0}}</td>
+                {% else %}
+                  <td> </td>
+                {% endif %}
+
+                <!--Piscina-->
+                {% if events.1 %} 
+                  <td>{{events.1}}</td>
+                {% else %}
+                  <td> </td>
+                {% endif %}
+
+                <!--Cancha síntetica-->
+                {% if events.2 %} 
+                  <td>{{events.2}}</td>
+                {% else %}
+                  <td> </td>
+                {% endif %}
+
+                <!--Pista Atlética-->
+                {% if events.3 %} 
+                  <td>{{events.3}}</td>
+                {% else %}
+                  <td> </td>
+                {% endif %}
+
+                <!--Gimnasio completo-->
+                {% if events.4 %} 
+                  <td>{{events.4}}</td>
+                {% else %}
+                  <td> </td>
+                {% endif %}
+
+                <!--Lugar externo-->
+                {% if events.5 %} 
+                  <td>{{events.5}}</td>
+                {% else %}
+                  <td> </td>
+                {% endif %}
+              </tr>
+            {% endfor %} 
+            <!--End Day hour-->
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <style rel="stylesheet">
+
+    .table_hours{
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 5px;
+    }
+
+    .table_hours thead tr th{
+      text-align: center;
+    }
+    
+    .table_hours tbody tr td{
+      text-align: center;
+    }
+
+    .calendar table{
+      table-layout: fixed;
+      width: 101%;
+    }
+
+    .calendar tr {
+      border: 0.5px solid black;
+      height: 50px;
+      text-align: center;
+    }
+
+    .calendar td {
+      border: 0.5px solid black;
+      height: 130px;
+      text-align:left;
+      vertical-align: top;  
+    }
+
+    .calendar td ul li{
+      font-size:13px;
+    }
+
+    .no_point li{
+      list-style: none;
+    }
+  </style>
+
+  <script>    
+    $('.day').on('click',function(e){
+      selected_day = e.currentTarget.id;
+      body = $('.body_hours')[0];
+      comp_list ='';
+      for(i = 0;i<16;i++){
+        hour = i+8;
+        comp_list = comp_list + '<tr><td class="table-info">'+hour+':00 - '+(hour+1)+':00 hrs</td><td>{{events.1}}</td><td>pos l_2</td><td>pos l_3</td><td>pos l_4</td><td>pos l_5</td></tr>';
+      }
+      $('.body_hours').html(comp_list);
+      $('#exampleModal').modal('show');
+    });
+  </script>
+{% endblock %}
+
+{% block active-logistics %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}
+
+ <!--
+                <ul class="no_point">
+                  <li>08:00 hrs</li><br>
+                  <li>09:00 hrs</li><br>
+                  <li>10:00 hrs</li><br>
+                  <li>11:00 hrs</li><br>
+                  <li>12:00 hrs</li><br>
+                  <li>13:00 hrs</li><br>
+                  <li>14:00 hrs</li><br>
+                  <li>15:00 hrs</li><br>
+                  <li>16:00 hrs</li><br>
+                  <li>17:00 hrs</li><br>
+                  <li>18:00 hrs</li><br>
+                  <li>19:00 hrs</li><br>
+                  <li>20:00 hrs</li><br>
+                  <li>21:00 hrs</li><br>
+                  <li>22:00 hrs</li><br>
+                  <li>23:00 hrs</li>
+                </ul>
+
+            <tr>
+              <td class="table-info">08:00 - 9:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">09:00 - 10:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">10:00 - 11:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">11:00 - 12:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">12:00 - 13:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">13:00 - 14:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">14:00 - 15:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">15:00 - 16:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">16:00 - 17:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">17:00 - 18:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">18:00 - 19:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">19:00 - 20:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">20:00 - 21:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">21:00 - 22:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">22:00 - 23:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            <tr>
+              <td class="table-info">23:00 - 24:00 hrs</td>
+              <td>pos l_1</td>
+              <td>pos l_2</td>
+              <td>pos l_3</td>
+              <td>pos l_4</td>
+              <td>pos l_5</td>
+            </tr>
+            -->
