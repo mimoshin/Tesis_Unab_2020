@@ -1,15 +1,82 @@
 from calendar import*
 
-months = {'January':'Enero','February':'Febrero','March':'Marzo','April':'Abril',
+
+#:::CONSTANT | VARS::::
+MONTHS = {'January':'Enero','February':'Febrero','March':'Marzo','April':'Abril',
           'May':'Mayo','June':'Junio','July':'Julio','August':'Agosto',
           'September':'Septiembre','October':'Octubre','November':'Noviembre','December':'Diciembre',
          }
-days = {'Mon':'Lunes','Tue':'Martes','Wed':'Miercoles','Thu':'Jueves','Fri':'Viernes','Sat':'Sabado','Sun':'Domingo'}
+DAYS = {'Mon':'Lunes','Tue':'Martes','Wed':'Miercoles','Thu':'Jueves','Fri':'Viernes','Sat':'Sabado','Sun':'Domingo'}
+
+DISP = [['8:00 - 9:00 hrs','none','none','none','none','none','none'],['9:00 - 10:00 hrs','none','none','none','none','none','none'],
+        ['10:00 - 11:00 hrs','none','none','none','none','none','none'],['11:00 - 12:00 hrs','none','none','none','none','none','none'],
+        ['12:00 - 13:00 hrs','none','none','none','none','none','none'],['13:00 - 14:00 hrs','none','none','none','none','none','none'],
+        ['14:00 - 15:00 hrs','none','none','none','none','none','none'],['15:00 - 16:00 hrs','none','none','none','none','none','none'],
+        ['16:00 - 17:00 hrs','none','none','none','none','none','none'],['17:00 - 18:00 hrs','none','none','none','none','none','none'],
+        ['18:00 - 19:00 hrs','none','none','none','none','none','none'],['19:00 - 20:00 hrs','none','none','none','none','none','none'],
+        ['20:00 - 21:00 hrs','none','none','none','none','none','none'],['21:00 - 22:00 hrs','none','none','none','none','none','none'],
+        ['22:00 - 23:00 hrs','none','none','none','none','none','none'],['23:00 - 24:00 hrs','none','none','none','none','none','none']]
+
+NUMBER_DAYS = ['none','none','none','none','none','none','none','none','none','none',
+               'none','none','none','none','none','none','none','none','none','none',
+               'none','none','none','none','none','none','none','none','none','none',
+               'none']
+#:::::::::::::::
+
+#:::functions:::
+def clean_disp():
+    var = [['8:00 - 9:00 hrs','none','none','none','none','none','none'],['9:00 - 10:00 hrs','none','none','none','none','none','none'],
+            ['10:00 - 11:00 hrs','none','none','none','none','none','none'],['11:00 - 12:00 hrs','none','none','none','none','none','none'],
+            ['12:00 - 13:00 hrs','none','none','none','none','none','none'],['13:00 - 14:00 hrs','none','none','none','none','none','none'],
+            ['14:00 - 15:00 hrs','none','none','none','none','none','none'],['15:00 - 16:00 hrs','none','none','none','none','none','none'],
+            ['16:00 - 17:00 hrs','none','none','none','none','none','none'],['17:00 - 18:00 hrs','none','none','none','none','none','none'],
+            ['18:00 - 19:00 hrs','none','none','none','none','none','none'],['19:00 - 20:00 hrs','none','none','none','none','none','none'],
+            ['20:00 - 21:00 hrs','none','none','none','none','none','none'],['21:00 - 22:00 hrs','none','none','none','none','none','none'],
+            ['22:00 - 23:00 hrs','none','none','none','none','none','none'],['23:00 - 24:00 hrs','none','none','none','none','none','none']]
+    return var
+
+
+def calendar_month(year,month,events):
+    h_c = custom_calendar()
+    h_c.load_events(events)
+    return h_c.formatmonth(year,month)
+
+def load_day():
+    day = ''
+    for x in DISP:
+        day+=str(x)+';'
+    return day
+
+def load_events_day(events):
+    day = ''
+    aux_c = custom_calendar()
+    aux_c.disponibility = clean_disp()
+    for x in events:
+        e_day = x.e_request.event_date.day
+        e_title,e_zone = x.e_request.event_title, x.e_request.event_place
+        i_hour,f_hour  = x.e_request.init_hour, x.e_request.finish_hour
+        aux_c.hour_zone(e_title,e_zone,i_hour,f_hour)
+
+    for hour in aux_c.disponibility:
+        day+=str(hour)+';'
+    return day
+    
+
+#:::::::::::::::
 
 class custom_calendar(HTMLCalendar):
     def load_events(self,events):
         self.events = events
+        self.total_days = NUMBER_DAYS
+
+    def hour_zone(self,title,zone,init,finish):
+        duration = finish.hour-init.hour
+        for hour in range(duration):
+            aux = (init.hour+hour)-8
+            self.disponibility[(init.hour+hour)-8][int(zone)] = title
+
     def formatday(self, day, weekday):
+        self.disponibility = clean_disp()
         """
         Return a day as a table cell.
         """
@@ -21,45 +88,28 @@ class custom_calendar(HTMLCalendar):
             elist = self.events
             day_count = 0
             for x in elist:
-                day_event= x.date.split(' ')
-                if day == int(day_event[0]):
+                e_day = x.e_request.event_date.day
+                if day == e_day:
+                    e_title,e_zone = x.e_request.event_title, x.e_request.event_place
+                    i_hour,f_hour  = x.e_request.init_hour, x.e_request.finish_hour
+
+                    self.hour_zone(e_title,e_zone,i_hour,f_hour)
+                    self.total_days[day-1] = self.disponibility
                     if day_count<3:
-                        d += f'<li type="_event_">'+x.event+' </li>'    
+                        d += f'<li type="_event_">'+e_title+'</li>'                            
                     elif day_count >=3:
-                        d += f'<li class="d-none" type="_event_">'+x.event+' </li>'    
-                    day_count+=1
-            
+                        d += f'<li class="d-none" type="_event_">'+e_title+' </li>'    
+                    day_count+=1 
+
+            if day_count == 0:
+                self.total_days[day-1] = clean_disp()
+              
             if day_count>3:
                 if day_count-3 == 1:
                     d+= f'<li type="more" > 1 evento mas</li>'
                 else:
                     d+= f'<li type="more" >'+str(day_count-3)+' eventos mas</li>'
-            """
-            print("Dia: {0} - Eventos: {1}".format(day,day_count))
-            total_list = [['ev a1'],
-                          ['ev b1','ev b2'],
-                          ['ev c1','ev c2','ev c3'],
-                          ['ev d1','ev d2','ev d3','ev d4'],
-                          ['ev e1','ev e2','ev e3','ev e4','ev e5'],
-                          ['ev f1','ev f2','ev f3','ev f4','ev f5','fv 6'],
-                          ['ev g1','ev g2','ev g3','ev g4','ev g5','gv 6','gv 7']] #largo 7 (0 a 6)
-
-            index_event = len(total_list)
-            for e_day in range(index_event):
-                if day == e_day+1:
-                    in_list = total_list[e_day]
-                    large = len(in_list)
-                    for event in range(large):
-                        if event <3:
-                            d += f'<li type="_event_">'+in_list[event]+' </li>'    
-                        elif event >=3:
-                            d += f'<li class="d-none" type="_event_">'+in_list[event]+' </li>'    
-                            if event == large-1 and large>3:
-                                if large-3 ==1:
-                                    d+= f'<li type="more" >'+str(large-3)+' evento mas</li>'
-                                else:
-                                    d+= f'<li type="more" >'+str(large-3)+' eventos mas</li>'
-            """
+           
             return '<td class="day %s"id="%d"><span>%d</span><ul class="event_list"> %s </ul></td>' % (self.cssclasses[weekday], day,day,d)
 
     def formatweek(self, theweek):
@@ -73,9 +123,8 @@ class custom_calendar(HTMLCalendar):
         """
         Return a weekday name as a table header.
         """
-        my_day = days[day_abbr[day]]
-        return '<th class="%s">%s</th>' % (
-            self.cssclasses_weekday_head[day], my_day)
+        my_day = DAYS[day_abbr[day]]
+        return '<th class="%s">%s</th>' % (self.cssclasses_weekday_head[day], my_day)
 
     def formatweekheader(self):
         """
@@ -89,7 +138,7 @@ class custom_calendar(HTMLCalendar):
         Return a month name as a table row.
         """
         if withyear:
-            month = months[month_name[themonth]]
+            month = MONTHS[month_name[themonth]]
             s = '%s %s' % (month, theyear)
         else:
             s = '%s' % month_name[themonth]
@@ -114,11 +163,4 @@ class custom_calendar(HTMLCalendar):
             a('\n')
         a('</table>')
         a('\n')
-        return ''.join(v)
-
-def calendar_month(year,month,events):
-    h_c = custom_calendar()
-    h_c.load_events(events)
-    data = h_c.formatmonth(year,month)
-    return data
-
+        return {'calendar':''.join(v),'disp_days':self.total_days}

@@ -15,11 +15,22 @@
     <form method="post" action="{% url 'new_info_request' %}">
       {% csrf_token %}
 
-      <div class="col-12"> 
-        <div class="form-group">
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="">Asunto: </label>
+            <input type="text" name="info_title" placeholder="Titulo...">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12"> 
+          <div class="form-group">
             <label for="">Solicitud de informacion</label>
-            <textarea name="info_detail" cols="130" rows="10" placeholder="Especifique detalles...""></textarea>
-        </div>  
+            <textarea name="info_detail" cols="130" rows="10" placeholder="Escriba su consulta"></textarea>
+          </div>  
+        </div>
       </div>
 
       <button type="submit" class ="btn btn-primary btn-user btn-block">Generar Solicitud</button>

@@ -39,32 +39,35 @@
   </div>
   
   <table class="table">
-    <thead>
+    <thead style="background-color: rgb(255,200,65);">
       <tr>
         <th> ID </th>
         <th> Solicitud</th>
         <th> Estado </th>
         <th> Fecha </th>
+        <th></th>
       </tr>
     </thead>
+    <tbody>
     {% if kwargs %}
       {% for x in kwargs %}
-        <thead>
           <tr>
-            <th class="table-success"> {{x.pk}}</th>
-            <th class="table-success"> {{x.event_title}}</th>
-            <th class="table-success"> {{x.status}}</th>
-            <th class="table-success"> {{x.time_create}}</th>
+            <th> {{x.pk}}</th>
+            <th> {{x.event_title}}</th>
+            <th> {{x.status}}</th>
+            <th> {{x.time_create}}</th>
             <th>
-              {% if x.modify_button %}
-                  <a class="btn btn-success btn-sm" href="#" role="button"> modificar </a>
+              {% if x.get_type == 'event' %}
+                <a class="btn btn-sm btn-info " href="{% url 'client_review' x.pk 0 %}" role="button"> Ver </a>
               {% endif %}
-              <button class="btn btn-sm btn-info "> Ver</button>
+              {% if x.get_type == 'info' %}
+                <a class="btn btn-sm btn-info " href="{% url 'client_review' x.pk 1 %}" role="button"> Ver </a>
+              {% endif %}
             </th>
           </tr>
-        </thead>
       {% endfor %}
     {% endif %}
+    </tbody>
   </table>
 
 {% endblock %}

@@ -54,11 +54,11 @@
         <label for="place_id">Lugar del evento:</label>
         <select class="form-control" name="event_place" id="place_id">
           <option value="0" selected disabled hidden> Seleccione Lugar</option>
-          <option value="2"> Multicancha</option>
-          <option value="3"> Pista Atlética</option>
-          <option value="4"> Piscina</option>
-          <option value="5"> Cancha de Fútbol</option>
-          <option value="6"> Otro</option>
+          <option value="1"> Multicancha</option>
+          <option value="2"> Pista Atlética</option>
+          <option value="3"> Piscina</option>
+          <option value="4"> Cancha de Fútbol</option>
+          <option value="5"> Otro</option>
         </select>
       </div>
 
@@ -80,15 +80,16 @@
 
       <div class="col-2">
         <label> Hora de inicio</label>
-        <div class="input-group timepicker">
+        <div class="input-group" id="f_hour">
           <input type="text" name="init_hour" class="form-control"><span class="input-group-addon ml-1">
             <svg width="2.2em" height="2.2em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
               <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
             </svg>
-          </span>  
+          </span>          
         </div>
       </div>
+      
 
       <div class="col-2">
         <label> Hora de termino</label>
@@ -140,7 +141,7 @@
     
     $('.input-group.date').datepicker({
       startDate:'24-09-2020',
-      format: 'dd/mm/yyyy',
+      format: 'yyyy-mm-dd',
       weekStart: 1,
       autoclose: true,
       language:'es'

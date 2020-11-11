@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.auth.decorators import login_required
 from .models import Admin, Client
+
 #:::::::::::::::::::Functions:::::::::::::::::::::
 def load_notify():
     notify_list = ["notificacion 1","notificacion 2","notificacion 3","notificacion 4","notificacion 5"]

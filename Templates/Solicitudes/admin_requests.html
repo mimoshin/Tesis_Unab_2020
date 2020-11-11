@@ -41,7 +41,12 @@
           <th></th>
           <th></th>
           <th>
-            <a class="btn btn-success btn-sm" href="{% url 'review_request' x.pk %}" role="button"> Revisar </a>
+            {% if x.get_type == 'event' %}
+              <a class="btn btn-sm btn-success " href="{% url 'review_request' x.pk 0 %}" role="button"> Revisar </a>
+            {% endif %}
+            {% if x.get_type == 'info' %}
+              <a class="btn btn-sm btn-success " href="{% url 'review_request' x.pk 1 %}" role="button"> Revisar </a>
+            {% endif %}
           </th>
         </tr>
         {% endfor %}

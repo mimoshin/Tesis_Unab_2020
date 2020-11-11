@@ -2,69 +2,152 @@
 {% load static %}
 
 {% block head %}
-  <!-- Datepicker -->
-  <link rel="stylesheet" href="{% static 'bootstrap-datepicker.min.css' %}">  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-  <script src="{% static 'bootstrap-datepicker.js' %}"></script>
 {% endblock %}
 
 {% block page-heading-content %}
-    <div class="calendar">
-
+  <div class="calendar num">
+    <div class="container mb-2">
+      {% if next == 1%}
+        <a href="{% url 'logistic_view' %}?month={{next}}&year={{next_year}}" class="btn btn-sm btn-primary float-right ml-1">Next</a>
+      {% else %}
+        <a href="{% url 'logistic_view' %}?month={{next}}&year={{year}}" class="btn btn-sm btn-primary float-right ml-1">Next</a>
+      {% endif %}
+      {% if prev == 12%}
+        <a href="{% url 'logistic_view' %}?month={{prev}}&year={{prev_year}}" class="btn btn-sm btn-primary float-right">Prev</a>
+      {% else %}
+        <a href="{% url 'logistic_view' %}?month={{prev}}&year={{year}}" class="btn btn-sm btn-primary float-right">Prev</a>
+      {% endif %}
+      
     </div>
+      {{calendar|safe}}
+  </div>
 
-<style rel="stylesheet">
-.calendar {
-    width: 100%;
-    margin: auto;
-    font-size: 15px;
-  }
-  
-  .calendar tr, .calendar td {
-    border: 1px solid black;
-  }
-  .calendar th {
-    padding: 10px;
-    text-align: center;
 
-  }
-  
-  .calendar td {
-    width: 100px;
-    height: 100px;
-    padding: 100px 100px 10px 10px;
-  }
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Lista de eventos </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="overflow-y: scroll;max-height: 300px;">
+        <table class="table_hours">
+          <thead>
+            <tr>
+              <th style="width: 130px;">Horario</th>
+              <th style="width: 80px;">Multicancha</th>
+              <th style="width: 80px;">Pista Atlética</th>
+              <th style="width: 80px;">Psicina</th>
+              <th style="width: 80px;">Cancha Sintetica</th>
+              <th style="width: 80px;">Gimnasio completo</th>
+              <th style="width: 80px;">Lugar externo</th>
+            </tr>
+          </thead>
+          <tbody class="body_hours">
+              <tr>
+                <td class="table-info" style="text-align: center;"> Horas</td>
 
-  .month {
-    font-size: 20px;
-    background-color:cornsilk;
-  }
+                <!--Multicancha-->
+                <td class="table-warning"> </td>
 
-  
-</style>
+                <!--Piscina-->
+                <td class="table-warning"> </td>
 
-<script>
-    $('.calendar').datepicker({
-        format: 'dd/mm/yyyy',
-        weekStart: 1,
-        language:'es',
-        maxViewMode: 6,
-        })
+                <!--Cancha síntetica-->
+                <td class="table-warning"> </td>
 
-    $('.datepicker-days').on('click','td',function(){
-        var day = $(this).text();
-        var month = $('.month.focused')[0].innerText;
-        var year = $('.year.focused')[0].innerText;
-        console.log(day,month,year);
-        
+                <!--Pista Atlética-->
+                <td class="table-warning"> </td>
 
+                <!--Gimnasio completo-->
+                <td class="table-warning"> </td>
+              
+                <!--Lugar externo-->
+                <td class="table-warning"> </td>
+              </tr>
+            <!--End Day hour-->
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <style rel="stylesheet">
+
+    .table_hours{
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 5px;
+    }
+
+    .table_hours thead tr th{
+      text-align: center;
+    }
+    
+    .table_hours tbody tr td{
+      text-align: center;
+    }
+
+    .calendar table{
+      table-layout: fixed;
+      width: 101%;
+    }
+
+    .calendar tr {
+      border: 0.5px solid black;
+      height: 50px;
+      text-align: center;
+    }
+
+    .calendar td {
+      border: 0.5px solid black;
+      height: 130px;
+      text-align:left;
+      vertical-align: top;  
+    }
+
+    .calendar td ul li{
+      font-size:13px;
+    }
+
+    .no_point li{
+      list-style: none;
+    }
+  </style>
+
+  <script>    
+    $('.day').on('click',function(e){
+      list_days = {{disponibility | safe}};
+      data_day = list_days[this.id-1];
+      if(data_day != 'none')
+      {
+        body = $('.body_hours');
+        text = ''
+        for(x= 0;x<16;x++){
+          text = text+'<tr><td class="table-info" style="text-align: center;">'+data_day[x][0]+'</td>';
+          for(y=1;y<7;y++){
+            if(data_day[x][y] == 'none'){
+              text = text+'<td class="table-warning"> </td>';
+            }
+            else{
+              text = text+'<td class="table-warning"><button class="btn" >'+ data_day[x][y]+'</button></td>';
+            }
+          }
+        }
+        text = text+'</tr>';
+        body.html(text);
+      }
+      $('#exampleModal').modal('show');
     });
-
-    
-    
-</script>
-
+  </script>
 {% endblock %}
 
 {% block active-logistics %}

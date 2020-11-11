@@ -1,27 +1,37 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import Event_Request
+from .models import Event_Request,Info_request
+from .forms import pruebaForm, otroForm
 from Login.models import Admin,Client
 
 
 #:::::::::::::::::::Functions:::::::::::::::::::::
+def load_client_requests(pk):
+    r_list = []
+    first = Event_Request.objects.filter(petitioner__client_person__pk=pk)
+    second = Info_request.objects.filter(petitioner__client_person__pk=pk)
+    for x in first:
+        r_list.append(x)
+    for y in second:
+        r_list.append(y)
+    return r_list
+
+def total_requests():
+    r_list = []
+    first = Event_Request.objects.all()
+    second = Info_request.objects.all()
+    for x in first:
+        r_list.append(x)
+    for y in second:
+        r_list.append(y)
+    return r_list
+
 def load_notify():
     notify_list = ["notificacion 1","notificacion 2","notificacion 3","notificacion 4","notificacion 5"]
     return notify_list
 
-def load_message():
-    messages_list = {"mensaje 1","mensaje 2","mensaje 3","mensaje 4","mensaje 5"}
-    return messages_list
-
-def load_data(user,kwargs = None):
-    u_messages = load_message()
-    u_notify = load_notify()
-    data = {'profile':user,'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
-    return data
-
 def load_data_2(kwargs = None):
-    u_messages = load_message()
     u_notify = load_notify()
-    data = {'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
+    data = {'u_notify':u_notify,'kwargs':kwargs}
     return data
 
 def load_client(user):
@@ -54,7 +64,7 @@ def requests_view(request):
 #:::::::::::::::::::Admin_Views:::::::::::::::::::
 #Admin_requests_view
 def admin_requests(request):
-    requests_list = Event_Request.objects.all()
+    requests_list = total_requests()
     data = load_data_2(requests_list)
     if request.method == 'POST':
         pass
@@ -62,21 +72,48 @@ def admin_requests(request):
         pass
     return render(request,'Solicitudes/admin_requests.html',data)
 
-#Admin_review_request
-def review_request(request,pk_id):
+#Admin_review_filter
+def review_request(request,pk_id,r_type):
+    if r_type == 0:
+        return review_request_event(request,pk_id)
+    elif r_type == 1:
+        return review_request_info(request,pk_id)
+
+
+#Admin_review_request_event
+def review_request_event(request,pk_id):
     object_request = Event_Request.objects.get(pk=pk_id)
     data = load_data_2(object_request)
     if request.method == 'POST':
         d_rcvd = request.POST
-        if d_rcvd['estado']:
-            object_request.status = d_rcvd['estado']
-            object_request.save()
-        else:
-            pass
-        return HttpResponse('hola')
+        stat_obs = d_rcvd.get('estado'),d_rcvd.get('observation')
+        if stat_obs[0]:
+            object_request.set_status(stat_obs[0])
+            return HttpResponse('hola')
+        elif stat_obs[1]:
+            object_request.create_obs(stat_obs[1])
     if request.method == 'GET':
         pass
-    return render(request,'Solicitudes/review_request.html',data)
+    return render(request,'Solicitudes/admin_review_event.html',data)
+
+#Admin_review_request_info
+def review_request_info(request,pk_id):
+    object_request = Info_request.objects.get(pk=pk_id)
+    data = load_data_2(object_request)
+    if request.method == 'POST':
+        d_rcvd = request.POST
+        response = d_rcvd.get('response')
+        stat_obs = d_rcvd.get('estado'),d_rcvd.get('observation')
+        if stat_obs[0]:
+            object_request.set_status(stat_obs[0])
+            return HttpResponse('hola')
+        elif stat_obs[1]:
+            object_request.create_obs(stat_obs[1])
+        elif response:
+            object_request.set_response(response)
+    if request.method == 'GET':
+        pass
+    return render(request,'Solicitudes/admin_review_info.html',data)
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -86,7 +123,7 @@ def review_request(request,pk_id):
 #Client_request_view
 def client_requests(request):
     pk = request.user.pk
-    requests_list = Event_Request.objects.filter(petitioner__client_person__pk=pk)
+    requests_list = load_client_requests(pk)
     data = load_data_2(requests_list)
     if request.method == 'POST':
         pass
@@ -100,25 +137,81 @@ def new_event_request(request):
     if request.method == 'POST':
         r_form = request.POST
         client = load_client(request.user)
-        n_request = Event_Request(petitioner=client,event_title=r_form['event_title'],event_type=r_form['event_type'],event_place=r_form['event_place'],event_date=r_form['event_date'],
-                    init_hour=r_form['init_hour'],finish_hour=r_form['finish_hour'], text=r_form['spe_ev'],status="Necesita revision")  
+        date_format = r_form['event_date']
+        print(date_format)
+        n_request = Event_Request(petitioner=client,event_title=r_form['event_title'],event_type=r_form['event_type'],event_place=r_form['event_place'],
+                                  status="Necesita revision",specification=r_form['spe_ev'],event_date=r_form['event_date'],init_hour=r_form['init_hour'],finish_hour=r_form['finish_hour'])  
+        #FALTA VALIDAR
         n_request.save()
-        print(r_form)
-        print(r_form['event_date'],r_form['init_hour'],r_form['finish_hour'])
+        #print(r_form)
+        #print(r_form['event_date'],r_form['init_hour'],r_form['finish_hour'])
         return redirect('requests_views')
     if request.method == 'GET':
         pass
     return render(request,'Solicitudes/new_client_e_request.html',data)
 
 #New_info_request
-def New_info_request(request):
+def new_info_request(request):
     data = load_data_2()
     if request.method == 'POST':
         r_form = request.POST
+        client = load_client(request.user)
+        n_request = Info_request(petitioner=client,event_title=r_form['info_title'],status="Necesita revision",specification=r_form['info_detail'])  
+        #FALTA VALIDAR
+        n_request.save()
+        #print(r_form)
+        #print(r_form['event_date'],r_form['init_hour'],r_form['finish_hour'])
         return redirect('requests_views')
     if request.method == 'GET':
         pass
     return render(request,'Solicitudes/new_client_i_request.html',data)
+
+#client_review_filter
+def client_review(request,pk_id,r_type):
+    if r_type == 0:
+        return client_review_event(request,pk_id)
+    elif r_type == 1:
+        return client_review_info(request,pk_id)
+
+#Client_review_request_event
+def client_review_event(request,pk_id):
+    object_request = Event_Request.objects.get(pk=pk_id)
+    data = load_data_2(object_request)
+    if request.method == 'POST':
+        d_rcvd = request.POST
+        if d_rcvd['estado']:
+            object_request.status = d_rcvd['estado']
+            object_request.save()
+        else:
+            pass
+        return HttpResponse(pk_id)
+    if request.method == 'GET':
+        pass
+    return render(request,'Solicitudes/client_review_event.html',data)
+
+#Client_review_request_event
+def client_review_info(request,pk_id):
+    object_request = Info_request.objects.get(pk=pk_id)
+    data = load_data_2(object_request)
+    if request.method == 'POST':
+        pass
+    if request.method == 'GET':
+        pass
+    return render(request,'Solicitudes/client_review_info.html',data)
+
+#Client_modify_request
+def modify_request(request,pk_id):
+    object_request = Event_Request.objects.get(pk=pk_id)
+    data = load_data_2(object_request)
+    if request.method == 'POST':
+        d_rcvd = request.POST
+        print("cambiar datos")
+        print(request.POST)
+        print(type(object_request))
+        object_request.modify_request(request.POST)
+    if request.method == 'GET':
+        pass
+    return render(request,'Solicitudes/modify_request.html',data)
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 

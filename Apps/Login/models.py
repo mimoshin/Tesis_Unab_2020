@@ -12,9 +12,9 @@ class Admin(models.Model):
 
 class Client(models.Model):
     client_person = models.ForeignKey(User,blank=False,on_delete=models.CASCADE)
-    corp = models.CharField(max_length=100,blank=True,null=True,default=None)
+    corp = models.CharField(max_length=20,blank=True,null=True,default=None)
     #Convertir client_type en choiches
-    client_type = models.CharField(max_length=100,blank=True,null=True,default=None)    
+    client_type = models.CharField(max_length=20,blank=True,null=True,default=None)    
     #Otros datos por definir
 
     def __str__(self):
