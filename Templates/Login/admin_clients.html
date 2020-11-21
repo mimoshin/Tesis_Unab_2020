@@ -8,23 +8,25 @@
 {% block page-heading-content %}
   <div class="d-sm-flex align-items-center mb-0 "><!-- d-sm-flex (responsive) -->
     <h1>Clientes</h1>
-    <a class="btn btn-primary btn-sm ml-auto " href="{% url 'registrar_cliente' %}" role="button"> Nuevo Cliente</a>
+    <a class="btn btn-primary btn-sm ml-auto " href="{% url 'register_client' %}" role="button"> Nuevo Cliente</a>
   </div>
 
   <table class="table">
     <thead>
-      <tr>
+      <tr class="table-info">
         <th> Nombre</th>
         <th>Apellido</th>
         <th>Correo</th>
         <th>Corp. o Club</th>
         <th>Opciones</th>
+        <th></th>
       </tr>
     </thead>
     {% if kwargs %}
       {% for x in kwargs %}
         <thead>
           <tr>
+            <th>{{x.pk}}</th>
             <th>{{x.client_person.first_name}}</th>
             <th>{{x.client_person.last_name}}</th>
             <th>{{x.client_person.email}}</th>
@@ -32,8 +34,7 @@
             <th>{{x.client_type}} </th>
             <th>
               <a class="btn btn-success btn-sm" href="{% url 'modify_client' x.client_person.pk %}" role="button"> Modificar </a>
-              <button class="btn btn-danger btn-sm " data-primary="{{x.client_person.pk}}" data-toggle="modal" 
-                      data-target="#eliminarModal" onclick="get_pk(this)">
+              <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal_delete" id="delete" value="{{x.client_person.pk}}">
                       Elimina cliente
               </button>
             </th>
@@ -43,19 +44,17 @@
     {% endif %}
   </table>
 
-  <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="modal_delete" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" >¿Desea eliminar este cliente?</h5>
-          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">x</span>
-          </button>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
         </div>
         <div class="modal-body">Presione "Si, estoy Seguro" para eliminar al cliente.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-          <form action="action" method="post">
+          <form action="action" method="post" id="delete_form">
             {% csrf_token %}
             <button class="btn btn-danger btn-ok"> Si, estoy Seguro</button>
           </form>
@@ -65,14 +64,11 @@
   </div>
 
   <script>
-    function get_pk(element){
-      var pk = element.dataset['primary'];
-      var opcion1 = document.getElementsByTagName('form');
-      opcion1['0'].action = "{% url 'delete_client' 0 %}".replace('0',pk);
-    }   
+    $('#delete').on('click',function(){
+      console.log(this.value);
+      $('#delete_form')[0].action = "{% url 'delete_client' 0 %}".replace('0',this.value);
+    });
   </script>
-
-
 {% endblock %}
 
 

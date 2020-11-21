@@ -4,27 +4,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.auth.decorators import login_required
 from .models import Admin, Client
+from .utilities import type_user,load_data,load_notify
 
 #:::::::::::::::::::Functions:::::::::::::::::::::
-def load_notify():
-    notify_list = ["notificacion 1","notificacion 2","notificacion 3","notificacion 4","notificacion 5"]
-    return notify_list
 
-def load_message():
-    messages_list = {"mensaje 1","mensaje 2","mensaje 3","mensaje 4","mensaje 5"}
-    return messages_list
-
-def load_data(usuario,kwargs = None):
-    u_messages = load_message()
-    u_notify = load_notify()
-    data = {'profile':usuario,'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
-    return data
-
-def load_data_2(kwargs = None):
-    u_messages = load_message()
-    u_notify = load_notify()
-    data = {'u_notify':u_notify,'u_messages':u_messages,'kwargs':kwargs}
-    return data
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
@@ -40,7 +23,6 @@ def start(request):
             u_type = 'anonimo'
         else:
             pass
-
     return render(request,'start_page.html',{'user':u_type})
 
 #Login_view
@@ -66,24 +48,14 @@ def entry(request):
 #Index_page_view
 @login_required(login_url='/')
 def index(request):
-    user_log = request.user
-    admin = Admin.objects.filter(admin_person__username = user_log ).exists()
-    client = Client.objects.filter( client_person__username = user_log ).exists()
-
-    if request.method == 'POST':
-        if admin:
-            return index_admin(request)
-        if client:
-            return index_client(request)
-    if request.method == 'GET':
-        if admin:
-            return index_admin(request)
-        if client:
-            return index_client(request)
-
+    user_log = type_user(request.user)
+    if user_log == 'admin':
+        return admin_index(request)
+    elif user_log == 'client':
+        return client_index(request)
     return render(request,'login/index.html')
 
-#Inscription_user_view
+#Inscription_user_view | OPCIONAL-VERIFICAR SU USO 
 def register(request):
     Users = list(User.objects.all())
     if request.method == 'POST':
@@ -97,7 +69,7 @@ def register(request):
         return render(request,'login/register_user.html',{"users_list":Users})
     return render(request,'login/register_user.html',{"users_list":Users})
 
-#Modifiy_user_view
+#Modifiy_user_view | OPCIONAL-VERIFICAR SU USO 
 def modify(request,pkid):
     #validar usuario
     selected_user = User.objects.get(pk=pkid)
@@ -111,14 +83,14 @@ def modify(request,pkid):
             selected_user.email = request.POST['email']
         selected_user.save()
         #Validar formulario
-        return redirect('adm_clientes')
+        return redirect('admin_clients')
     if request.method == 'GET':
         print("GET: modify ---- selecionado el usuario ",selected_user.first_name)
         return render(request,'login/modify.html',{"user":selected_user})
 
     return render(request,'login/modify.html',{"user":selected_user})
 
-#Delete_user_view
+#Delete_user_view | OPCIONAL-VERIFICAR SU USO 
 def delete(request,pkid):
     selected_user = User.objects.get(pk=pkid)
     print("elimnando")
@@ -136,8 +108,8 @@ def user_logout(request):
 #:::::::::::::::::::Admin_Views:::::::::::::::::::
 
 #index_view
-def index_admin(request):
-    data = load_data_2()
+def admin_index(request):
+    data = load_data()
     if request.method == 'POST':
         pass
     if request.method == 'GET':
@@ -147,7 +119,7 @@ def index_admin(request):
 #index_module_client_view
 def admin_clients(request):
     users_list = Client.objects.all()
-    data = load_data_2(users_list)
+    data = load_data(users_list)
     if request.method == 'POST':
         pass
     if request.method == 'GET':
@@ -156,17 +128,15 @@ def admin_clients(request):
 
 #Register_new_client_view
 def new_client(request):
-    data = load_data_2()
+    data = load_data()
     if request.method == 'POST':
         aux = request.POST
-        new_user = User(username=aux['username'], first_name=aux['first_name'], 
-                        last_name=aux['last_name'], email=aux['email'])
+        new_user = User(username=aux['username'], first_name=aux['first_name'],last_name=aux['last_name'], email=aux['email'])
         new_user.set_password(aux["password"])
         new_user.save()
-
         new_client = Client(client_person=new_user, corp=aux['corp'], client_type=aux['type'])
         new_client.save()
-        return redirect('adm_clientes')
+        return redirect('admin_clients')
         
     if request.method == 'GET':
         return render(request,'login/new_client.html',data)
@@ -177,8 +147,7 @@ def new_client(request):
 def modify_client(request,pk_id):
     aux_client = Client.objects.get(client_person__pk=pk_id)
     selected_user = aux_client.client_person
-    
-    data = load_data_2(selected_user)# reemplazo de load_data
+    data = load_data(selected_user)# reemplazo de load_data
     if request.method == 'POST':
         if request.POST['first_name']:
             selected_user.first_name = request.POST['first_name']
@@ -189,7 +158,7 @@ def modify_client(request,pk_id):
             selected_user.email = request.POST['email']
         selected_user.save()
         #Validar formulario
-        return redirect('adm_clientes')
+        return redirect('admin_clients')
     if request.method == 'GET':
         return render(request,'login/modify_client.html',data)
     return render(request,'login/modify_client.html',data)
@@ -202,20 +171,19 @@ def delete_client(request,pk_id):
     if request.method == 'GET':
         pass
     print("quiero eliminar al usuario",aux_client)
-    return redirect('adm_clientes')
+    return redirect('admin_clients')
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 #:::::::::::::::::::Client_Views::::::::::::::::::
-def index_client(request):
+def client_index(request):
     data = load_data(request.user)
     if request.method == 'POST':
         pass
     if request.method == 'GET':
         pass
     return render(request,'base_client.html',data)
-
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 

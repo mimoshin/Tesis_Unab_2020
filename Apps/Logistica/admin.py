@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import event_calendar,other_event
+from .models import*
 # Register your models here.
 admin.site.register(event_calendar)
 admin.site.register(other_event)
+admin.site.register(Dep_event)
+admin.site.register(Ind_event)

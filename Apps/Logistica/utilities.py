@@ -2,20 +2,26 @@ from calendar import*
 
 
 #:::CONSTANT | VARS::::
+"""
+*****Formato de horario disponible por dia*****
+[['8:00 - 9:00 hrs','none','none','none','none','none','none'],['9:00 - 10:00 hrs','none','none','none','none','none','none'],
+['10:00 - 11:00 hrs','none','none','none','none','none','none'],['11:00 - 12:00 hrs','none','none','none','none','none','none'],
+['12:00 - 13:00 hrs','none','none','none','none','none','none'],['13:00 - 14:00 hrs','none','none','none','none','none','none'],
+['14:00 - 15:00 hrs','none','none','none','none','none','none'],['15:00 - 16:00 hrs','none','none','none','none','none','none'],
+['16:00 - 17:00 hrs','none','none','none','none','none','none'],['17:00 - 18:00 hrs','none','none','none','none','none','none'],
+['18:00 - 19:00 hrs','none','none','none','none','none','none'],['19:00 - 20:00 hrs','none','none','none','none','none','none'],
+['20:00 - 21:00 hrs','none','none','none','none','none','none'],['21:00 - 22:00 hrs','none','none','none','none','none','none'],
+['22:00 - 23:00 hrs','none','none','none','none','none','none'],['23:00 - 24:00 hrs','none','none','none','none','none','none']]
+
+[ [HORA,ZONA_1,ZONA_2,ZONA_3,ZONA_4,ZONA_5,ZONA_6] ]
+
+"""
 MONTHS = {'January':'Enero','February':'Febrero','March':'Marzo','April':'Abril',
           'May':'Mayo','June':'Junio','July':'Julio','August':'Agosto',
           'September':'Septiembre','October':'Octubre','November':'Noviembre','December':'Diciembre',
          }
 DAYS = {'Mon':'Lunes','Tue':'Martes','Wed':'Miercoles','Thu':'Jueves','Fri':'Viernes','Sat':'Sabado','Sun':'Domingo'}
 
-DISP = [['8:00 - 9:00 hrs','none','none','none','none','none','none'],['9:00 - 10:00 hrs','none','none','none','none','none','none'],
-        ['10:00 - 11:00 hrs','none','none','none','none','none','none'],['11:00 - 12:00 hrs','none','none','none','none','none','none'],
-        ['12:00 - 13:00 hrs','none','none','none','none','none','none'],['13:00 - 14:00 hrs','none','none','none','none','none','none'],
-        ['14:00 - 15:00 hrs','none','none','none','none','none','none'],['15:00 - 16:00 hrs','none','none','none','none','none','none'],
-        ['16:00 - 17:00 hrs','none','none','none','none','none','none'],['17:00 - 18:00 hrs','none','none','none','none','none','none'],
-        ['18:00 - 19:00 hrs','none','none','none','none','none','none'],['19:00 - 20:00 hrs','none','none','none','none','none','none'],
-        ['20:00 - 21:00 hrs','none','none','none','none','none','none'],['21:00 - 22:00 hrs','none','none','none','none','none','none'],
-        ['22:00 - 23:00 hrs','none','none','none','none','none','none'],['23:00 - 24:00 hrs','none','none','none','none','none','none']]
 
 NUMBER_DAYS = ['none','none','none','none','none','none','none','none','none','none',
                'none','none','none','none','none','none','none','none','none','none',
@@ -43,7 +49,7 @@ def calendar_month(year,month,events):
 
 def load_day():
     day = ''
-    for x in DISP:
+    for x in clean_disp():
         day+=str(x)+';'
     return day
 
@@ -87,19 +93,41 @@ class custom_calendar(HTMLCalendar):
             d= ''
             elist = self.events
             day_count = 0
-            for x in elist:
-                e_day = x.e_request.event_date.day
-                if day == e_day:
-                    e_title,e_zone = x.e_request.event_title, x.e_request.event_place
-                    i_hour,f_hour  = x.e_request.init_hour, x.e_request.finish_hour
+            for event in elist:
+                if event.get_type() == 'Dep':
+                    """
+                    Evento dependiente de una solicitud
+                    """
+                    e_day = event.e_request.event_date.day
+                    if day == e_day:
+                        e_title,e_zone = event.e_request.event_title, event.e_request.event_place
+                        i_hour,f_hour  = event.e_request.init_hour, event.e_request.finish_hour
 
-                    self.hour_zone(e_title,e_zone,i_hour,f_hour)
-                    self.total_days[day-1] = self.disponibility
-                    if day_count<3:
-                        d += f'<li type="_event_">'+e_title+'</li>'                            
-                    elif day_count >=3:
-                        d += f'<li class="d-none" type="_event_">'+e_title+' </li>'    
-                    day_count+=1 
+                        self.hour_zone(e_title,e_zone,i_hour,f_hour)
+                        self.total_days[day-1] = self.disponibility
+                        if day_count<3:
+                            d += f'<li type="_event_">'+e_title+'</li>'                            
+                        elif day_count >=3:
+                            d += f'<li class="d-none" type="_event_">'+e_title+' </li>'    
+                        day_count+=1 
+
+                elif event.get_type() == 'Ind':
+                    """
+                    Evento independiente de una solicitud
+                    """
+                    e_day = event.event_date.day                    
+                    if day == e_day:
+                        e_title,e_zone = event.event_title, event.event_place
+                        i_hour,f_hour  = event.init_hour, event.finish_hour
+
+                        self.hour_zone(e_title,e_zone,i_hour,f_hour)
+                        self.total_days[day-1] = self.disponibility
+                        if day_count<3:
+                            d += f'<li type="_event_">'+e_title+'</li>'                            
+                        elif day_count >=3:
+                            d += f'<li class="d-none" type="_event_">'+e_title+' </li>'    
+                        day_count+=1 
+                    
 
             if day_count == 0:
                 self.total_days[day-1] = clean_disp()

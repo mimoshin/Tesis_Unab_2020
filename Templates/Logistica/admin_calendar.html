@@ -7,7 +7,8 @@
 {% block page-heading-content %}
   <div class="calendar num">
     <div class="container mb-2">
-      <a href="#" class="btn btn-sm btn-primary float-right ml-1">Calendarizar evento</a>
+      <button class="btn btn-sm btn-primary" id="parapost">Consultar eventos</button>
+      <!--<a href="#" class="btn btn-sm btn-primary float-right ml-1">Calendarizar evento</a>-->
       {% if next == 1%}
         <a href="{% url 'logistic_view' %}?month={{next}}&year={{next_year}}" class="btn btn-sm btn-primary float-right ml-1">Next</a>
       {% else %}
@@ -124,12 +125,19 @@
   </style>
 
   <script>    
+
+    $('#parapost').on('click',function(){
+      $.post("{% url 'logistic_view'%}",
+            {"consulta":1,"csrfmiddlewaretoken": "{{csrf_token}}",},
+             function(response){
+              console.log(response);
+             });
+    });
     $('.day').on('click',function(e){
       list_days = {{disponibility | safe}};
       data_day = list_days[this.id-1];
       if(data_day != 'none')
       {
-        body = $('.body_hours');
         text = ''
         for(x= 0;x<16;x++){
           text = text+'<tr><td class="table-info" style="text-align: center;">'+data_day[x][0]+'</td>';
@@ -143,7 +151,7 @@
           }
         }
         text = text+'</tr>';
-        body.html(text);
+        $('.body_hours').html(text);
       }
       $('#exampleModal').modal('show');
     });

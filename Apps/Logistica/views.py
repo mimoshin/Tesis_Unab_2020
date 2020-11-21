@@ -1,19 +1,14 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.urls import reverse
-from Login.models import Client,Admin
+from Login.models import Client, Admin
 from Solicitudes.models import Event_Request
-from .models import event_calendar,other_event
-from .utilities import calendar_month,load_day,load_events_day
+from .models import event_calendar, other_event, Dep_event, Ind_event, Calendar_Factory
+from .utilities import calendar_month, load_day, load_events_day
 from datetime import date
-
+from Login.utilities import type_user
 
 
 #:::::::::::::::::::Functions:::::::::::::::::::::
-def load_events(month,year):
-    month_filter = r'{0}-{1}-.*'.format(str(year),str(month))
-    event_list = list(other_event.objects.filter(e_request__event_date__regex = month_filter))
-    return event_list
-
 def load_client_event(client_pk):
     event_list = list(other_event.objects.filter(e_request__petitioner__client_person__pk=client_pk))
     print('holi')
@@ -31,20 +26,12 @@ def events_day(filter_day):
 
 #:::::::::::::::::::General_Views:::::::::::::::::
 def logistic_view(request):
-    user_log = request.user
-    admin = Admin.objects.filter(admin_person__username = user_log ).exists()
-    client = Client.objects.filter( client_person__username = user_log ).exists()
-    if request.method == 'POST':
-        if admin:
-            return admin_logistic(request)
-        if client:
-            return client_logistic(request)
-    if request.method == 'GET':
-        if admin:
-            return admin_logistic(request)
-        if client:
-            return client_logistic(request)
-        return redirect('/')
+    user_log = type_user(request.user)
+    if user_log == 'admin':
+        return admin_logistic(request)
+    elif user_log == 'client':
+        return client_logistic(request)
+    return render(request,'/')
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
@@ -52,8 +39,12 @@ def logistic_view(request):
 def admin_logistic(request):
     today = date.today()
     if request.method == 'POST':
-        pass
-
+        year = int(today.year)
+        month = int(today.month)
+        if request.POST.get('consulta'):
+            data = Calendar_Factory.get_events(month,year)
+            print(Calendar_Factory.get_all(month,year))
+            return HttpResponse(data)
     if request.method == 'GET':
         d_recvd = request.GET
         if d_recvd.get('month') and d_recvd.get('year'):
@@ -98,7 +89,7 @@ def admin_logistic(request):
             next_month = int(today.month)+1
             #print("año: {0}  proximo año {1} mes: {2} proximo mes: {3} mes anterior: {4}".format(year,next_year,month,next_month,prev_month))
         
-        events = load_events(month,year)
+        events = Calendar_Factory.get_all(month,year)
         aux = calendar_month(year,month,events)
             
     return render(request,'Logistica/admin_calendar.html',{'calendar':aux['calendar'],'next':next_month,'prev':prev_month,'year':year,

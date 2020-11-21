@@ -1,0 +1,198 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page-heading-content %}
+  <div class="d-sm-flex align-items-center mb-2 ">
+    <h2>Torneo individual</h2>
+    <a class="btn btn-info btn-sm ml-auto" href="{% url 'events_view' %}">Volver</a>
+    {% if kwargs.status != 'Rechazado' and kwargs.status != 'Aprobado'  %} 
+      <button class="btn btn-warning btn-sm mr-2 ml-2" id="obs">Observación</button>
+    {% endif %}    
+  </div>
+
+  {% if kwargs %}
+  <div class="row" style="background-color:khaki;">
+    <div class="col-4 mt-2">
+      <h5>Evento:</h5>
+      <p>{{kwargs.event_title}}</p>
+    </div>
+
+    <div class="col-4 mt-2">
+      <h5>Club encargado:</h5>
+      <p>ASIGNAR CLUB</p>
+    </div>
+
+    <div class="col-4 mt-2">
+      <h5>Fecha</h5>
+      <p>ASIGNAR FECHA</p>
+    </div>
+  </div>
+    
+  <div class="row" style="background-color:lavender">
+    <div class="col-4 mt-2">
+
+    </div>
+    <div class="col-4 mt-2">
+
+    </div>
+    <div class="col-4 mt-2">
+      <p>SPACING</p>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:khaki">
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
+          <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Hora inicio :</h5>
+      <p>ASIGNAR HORAS</p>
+    </div>
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
+          <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Hora fin :</h5>
+      <p>ASIGNAR HORAS</p>
+    </div>
+    <div class="col-4 mt-2">
+      <h5 >Zona:</h5>
+      <p>ASIGNAR ZONA</p>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:lavender">
+    <div class="col-4 mt-2">
+      <h5>Estado:</h5>
+      <p>{{kwargs.status}}</p>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:khaki">
+    <div class="col-12 mt-2">
+      <p>SPACING</p>
+    </div>
+  </div>
+    
+  <div class="row">
+    <div class="col-4"></div>
+    <div class="col-6">
+      <button class="btn btn-md btn-success mt-2" id="inscription">ver inscripciones</button>
+    </div>
+  </div>
+  {% endif %}
+
+  <!--observation modal -->
+  <div class="modal fade" id="obs_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="h5_obs_modal">Ingrese su observación</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="#">
+            {% csrf_token %}
+            <textarea class="form-control limit" name="observation" maxlength="300" rows="3" id="obs_text"></textarea>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-warning" >Generar</button>
+          </form> 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- event modal -->
+  <div class="modal fade" id="insc_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Participantes Inscritos </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="overflow-y: scroll;max-height: 700px;">
+          <table class="table_hours">
+            <thead>
+              <tr>
+                <th class="table-info" style="width: 200px;">Nombre</th>
+                <th class="table-info" style="width: 200px;">Apellido</th>
+                <th class="table-info" style="width: 200px;">Edad</th>
+                <th class="table-info" style="width: 200px;">Estado</th>
+                <th class="table-info" style="width: 200px;">Club</th>
+              </tr>
+            </thead>
+            <tbody id="list_teams">
+                <tr>
+                  <!--teams-->
+                  <td class="table-info" style="text-align: center;">d </td>
+                  <!--n° athletes-->
+                  <td class="table-warning"> </td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <!--Espacio disponible para alguna funcionalidad-->
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <style rel="stylesheet">
+    .table_hours{
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 5px;
+    }
+
+    .table_hours thead tr th{
+      text-align: center;
+    }
+    
+    .table_hours tbody tr td{
+      text-align: center;
+    }
+  </style>
+
+  <script type="text/javascript">
+    $('#inscription').on('click',function(){
+      $.post("{% url 'question_person' %}",
+      {'event':{{kwargs.pk}},"csrfmiddlewaretoken": "{{csrf_token}}"},
+      function(response){
+        max = response.length;
+        text = '';
+        for(x= 0;x<max;x++){
+            console.log(response[x]);
+            url ="{% url 'events_view'%}"
+            text = text+"<tr><td class='table-warning' style='text-align: center;'><a type='button' href='"+url+"'class='btn'>"+response[x]['first_name']+"</a></td>"
+            text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['last_name']+"</td>"
+            text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['age']+"</td>"
+            text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['status']+"</td>"
+            text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['club']+"</td></tr>"
+        }    
+        $('#list_teams').html(text);
+      });
+      $('#insc_modal').modal('show');
+    });
+
+    $('#obs').on('click',function(){
+      $('#obs_modal').modal('show');
+    });
+
+  </script>
+{% endblock %}
+
+{% block active-events %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}
+
