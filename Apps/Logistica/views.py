@@ -4,7 +4,7 @@ from datetime import date
 from Login.models import User_Factory
 from Solicitudes.models import Request_Factory
 from Eventos.models import Event_factory
-from .models import Calendar_Factory
+from .models import Calendar_Factory,project
 from .utilities import calendar_month, load_day, load_events_day
 
 
@@ -22,6 +22,14 @@ def logistic_view(request):
         return admin_logistic(request)
     elif user_log == 'client':
         return client_logistic(request)
+    return render(request,'/')
+
+def projects_view(request):
+    user_log = User_Factory.get_type_user(request.user)
+    if user_log == 'admin':
+        return admin_projects(request)
+    elif user_log == 'client':
+        return client_projects(request)
     return render(request,'/')
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -87,6 +95,26 @@ def admin_logistic(request):
             
     return render(request,'Logistica/admin_calendar.html',{'calendar':aux['calendar'],'disponibility':aux['disp_days']})
 
+def admin_projects(request):
+    projects = project.objects.all()
+    if request.method == 'POST':
+        pass
+    if request.method == 'GET':
+        pass
+    return render(request,'Logistica/proyectos/admin_projects.html',{'kwargs':projects})
+
+def create_project(request):
+    data = 'data'
+    if request.method == 'POST':
+        data_form = request.POST
+        print(data_form)
+        new_project = project(project_title=data_form['title'],date_init=data_form['init'],date_finish=data_form['finish'],details=data_form['details'])
+        new_project.save()
+        return redirect('projects_view')
+    if request.method == 'GET':
+        pass
+    return render(request,'Logistica/proyectos/new_project.html',{'kwargs':data})
+
 def request_day(request):
     """
     Consulta los eventos del dia indicado mediante una peticion POST
@@ -113,17 +141,23 @@ def request_day(request):
 
 def entry_event(request):
     if request.method == 'POST':
-        d_recvd = request.POST
-        pk_request = d_recvd.get('e_request')
-        request_data = Request_Factory.get_request('event',pk_request)
-        new_event = Event_factory.create_event(request=request_data)
-        Calendar_Factory.create_event('Dep',request_data,request.user,new_event)
-        request_data.set_status('0')
-        return HttpResponse('Creacion Correcto')    
+        form_data = request.POST
+        pk_request = form_data.get('e_request')
+        if pk_request == 'NoRequest':
+            #organizer = User_Factory.get_client(form_data['client_pk'])
+            new_event = Event_factory.create_event(request='NoRequest',form=form_data)
+            print('creando evento')
+            Calendar_Factory.create_event('Ind','NoRequest',request.user,new_event)
+        else:
+            request_data = Request_Factory.get_request('event',pk_request)
+            new_event = Event_factory.create_event(request=request_data)
+            Calendar_Factory.create_event('Dep',request_data,request.user,new_event)
+            request_data.set_status('0')
+            return HttpResponse('Creacion Correcto')    
         
     if request.method == 'GET':
         pass
-    return redirect('/solicitudes')
+    return redirect('/logistica')
 
     
 
@@ -187,7 +221,13 @@ def client_logistic(request):
             
     return render(request,'Logistica/client_calendar.html',{'calendar':aux['calendar'],'disponibility':aux['disp_days']})
 
-
+def client_projects(request):
+    projects = project.objects.all()
+    if request.method == 'POST':
+        pass
+    if request.method == 'GET':
+        pass
+    return render(request,'Logistica/proyectos/client_projects.html',{'kwargs':projects})
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 

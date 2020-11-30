@@ -1,14 +1,12 @@
 {% extends 'base_client.html' %}
 {% load static %}
 
-{% block page-heading-content %}
-  <div class="row "><!-- d-sm-flex (responsive) -->
-    <div class="col-6">
-      <h1>Eventos (Cliente)</h1>
-    </div>
-    <div class="col-4"></div>
-</div>
+{% block top-message %}
+  <h3>Eventos</h3>
+{% endblock %}
 
+
+{% block page-heading-content %}
   <table class="table table-striped">
     <thead style="background-color: rgb(252, 70, 70);">
       <tr>

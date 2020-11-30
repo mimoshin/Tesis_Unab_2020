@@ -1,4 +1,5 @@
 from calendar import*
+from Eventos.models import Event_factory
 
 
 #:::CONSTANT | VARS::::
@@ -27,6 +28,7 @@ NUMBER_DAYS = ['none','none','none','none','none','none','none','none','none','n
                'none','none','none','none','none','none','none','none','none','none',
                'none','none','none','none','none','none','none','none','none','none',
                'none']
+e_dict = {'single_championship':'single','team_championship':'team','other_event':'other'}
 #:::::::::::::::
 
 #:::functions:::
@@ -76,9 +78,13 @@ def load_events_day(events):
             """
             Evento independiente de una solicitud
             """
+            
+            class_type = str(event.content_type).split('|')[1]
+            class_type = class_type[1:]
+            Qevent = Event_factory.get_event(e_dict[class_type],event.object_id)                
             e_day = event.event_date.day
-            e_title,e_zone = event.event_title, event.event_place
-            i_hour,f_hour  = event.init_hour,event.finish_hour
+            e_title,e_zone = Qevent.event_title, Qevent.event_place 
+            i_hour,f_hour  = Qevent.init_hour, Qevent.finish_hour
             aux_c.hour_zone(e_title,e_zone,i_hour,f_hour)
     
     day = aux_c.disponibility
@@ -150,8 +156,12 @@ class custom_calendar(HTMLCalendar):
                     """
                     e_day = event.event_date.day                    
                     if day == e_day:
-                        e_title,e_zone = event.event_title, event.event_place
-                        i_hour,f_hour  = event.init_hour, event.finish_hour
+                        class_type = str(event.content_type).split('|')[1]
+                        class_type = class_type[1:]
+                        Qevent = Event_factory.get_event(e_dict[class_type],event.object_id)
+                        
+                        e_title,e_zone = Qevent.event_title, Qevent.event_place 
+                        i_hour,f_hour  = Qevent.init_hour, Qevent.finish_hour
 
                         self.hour_zone(e_title,e_zone,i_hour,f_hour)
                         self.total_days[day-1] = self.disponibility
@@ -160,6 +170,7 @@ class custom_calendar(HTMLCalendar):
                         elif day_count >=3:
                             d += f'<li class="d-none" type="_event_">'+e_title+' </li>'    
                         day_count+=1 
+                        
                     
 
             if day_count == 0:

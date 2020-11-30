@@ -92,7 +92,7 @@
 
         <li class="nav-item active">
           <button class="btn btn-sm btn-secondary my-1 btn-block d-flex">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'projects_view' %}">
               <i class="fas fa-fw fa-lightbulb"></i>
               <span>Proyectos</span>
             </a>
@@ -100,15 +100,7 @@
             {% endblock %}
           </button>
         </li>
-      
-        <li class="nav-item active">
-          <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-lightbulb"></i>
-            <span>Permisos</span>
-            {% block active-perms %}
-            {% endblock %}
-          </a>
-        </li>
+
       </ul>
       <!-- End of Sidebar -->
     
@@ -121,18 +113,20 @@
             {% block top-message %}
             <a href="/indexcliente"><h1 class="h3 mb-0 text-gray-800">Bienvenido</h1></a>
             {% endblock %}
-            <!-- Topbar Navbar -->
+            
             <ul class="navbar-nav ml-auto">  
+              <!-- Topbar Navbar 
               {% block alerts %}
-              <!-- Nav Item - Alerts -->
+              <!-- Nav Item - Alerts 
+
               <li class="nav-item dropdown no-arrow mx-1">
                 <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="fas fa-bell fa-fw"></i>
-                  <!-- Counter - Alerts -->
+                  <!-- Counter - Alerts 
                   <span class="badge badge-danger badge-counter">3+</span>
-                </a>
+                </a>-->
 
-                <!-- Dropdown - Alerts -->
+                <!-- Dropdown - Alerts 
                 <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                   <h6 class="dropdown-header">Alerts Center</h6>
                   
@@ -153,7 +147,7 @@
                   <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                 </div>
               </li>
-              <!-- alerts-->
+               alerts-->
               {% endblock %} 
             
 

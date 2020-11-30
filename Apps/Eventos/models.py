@@ -58,21 +58,39 @@ class Event_factory():
         #organizer | event_title | event_type | event_place | event_date | init_hour | finish_hour | status | observation 
         if kwargs: 
             data = kwargs['request'] 
-            if data.event_type == 1 or data.event_type == 4: #Other_event
-                new_event = Other_event(organizer=data.petitioner,event_title=data.event_title,event_type=data.event_type,event_place=data.event_place,
-                                              event_date=data.event_date,init_hour=data.init_hour,finish_hour=data.finish_hour)
-                new_event.save()
+            if data == 'NoRequest':
+                data=kwargs['form']
+                try:
+                    if data['event_type'] == '1' or data['event_type'] == '4': #Other_event
+                        new_event = Other_event(event_title=data['event_title'],event_type=data['event_type'],event_place=data['event_place'],
+                                              event_date=data['event_date'],init_hour=data['init_hour'],finish_hour=data['finish_hour'])
 
-            elif data.event_type == 2: #Single_championship
-                new_event = Single_championship(organizer=data.petitioner,event_title=data.event_title,event_type=data.event_type,event_place=data.event_place,
-                                              event_date=data.event_date,init_hour=data.init_hour,finish_hour=data.finish_hour)
-                new_event.save()
+                    elif data['event_type'] == '2': #Single_championship
+                        new_event = Single_championship(event_title=data['event_title'],event_type=data['event_type'],event_place=data['event_place'],
+                                              event_date=data['event_date'],init_hour=data['init_hour'],finish_hour=data['finish_hour'])
                 
-            elif data.event_type == 3:
-                new_event = Team_championship(organizer=data.petitioner,event_title=data.event_title,event_type=data.event_type,event_place=data.event_place,
+                    elif data['event_type'] == '3':
+                        new_event = Team_championship(event_title=data['event_title'],event_type=data['event_type'],event_place=data['event_place'],
+                                              event_date=data['event_date'],init_hour=data['init_hour'],finish_hour=data['finish_hour'])
+                    
+                except Exception as e:
+                    print("error en no request")
+                    print(e)
+
+            else:
+                if data.event_type == 1 or data.event_type == 4: #Other_event
+                    new_event = Other_event(organizer=data.petitioner,event_title=data.event_title,event_type=data.event_type,event_place=data.event_place,
                                               event_date=data.event_date,init_hour=data.init_hour,finish_hour=data.finish_hour)
-                new_event.save()
+
+                elif data.event_type == 2: #Single_championship
+                    new_event = Single_championship(organizer=data.petitioner,event_title=data.event_title,event_type=data.event_type,event_place=data.event_place,
+                                                  event_date=data.event_date,init_hour=data.init_hour,finish_hour=data.finish_hour)
+                
+                elif data.event_type == 3:
+                    new_event = Team_championship(organizer=data.petitioner,event_title=data.event_title,event_type=data.event_type,event_place=data.event_place,
+                                              event_date=data.event_date,init_hour=data.init_hour,finish_hour=data.finish_hour)
             
+        new_event.save()  
         return new_event
 
     @staticmethod

@@ -48,11 +48,9 @@ class Ind_event(iEvent_calendar):
     e_request = models.CharField(max_length=100,default="NoRequest") 
     specification = models.CharField(max_length=100,blank=False,null=False,default='especification')     
     def __str__(self):
-        event = self.event_title
+        event = self.content_type
         date = self.event_date
-        init = self.init_hour.strftime('%H')
-        finish = self.finish_hour.strftime('%H')
-        return "{0} {1} {2} {3}".format(event,date,init,finish)
+        return "{0} {1} ".format(event,date)
     
     def get_type(self):
         return "Ind"
@@ -102,9 +100,10 @@ class Calendar_Factory():
     @staticmethod
     def create_event(e_type,e_re,u_admin,event):
         if e_type == 'Ind':
-            adm = Admin.objects.get(log_user__username=u_admn)        
-            event = Dep_event(creator=adm,event='586',e_request=e_re) 
-            event.save()
+            adm = Admin.objects.get(log_user__username=u_admin)        
+            c_type = ContentType.objects.get(app_label='Eventos',model=event.get_class())
+            new_event = Ind_event(creator=adm,e_request=e_re,content_type=c_type,object_id=event.pk) 
+            new_event.save()
             
         elif e_type == 'Dep':
             admin =  Admin.objects.get(log_user__username=u_admin)         
@@ -112,15 +111,10 @@ class Calendar_Factory():
             new_event = Dep_event(creator=admin,e_request=e_re,content_type=c_type,object_id=event.pk) 
             new_event.save()
             
-
-
-
-
-
 class project(models.Model):
     creator = models.ForeignKey(Admin,blank=False,null=False,on_delete=models.CASCADE,default=1)
     date_finish = models.DateField(blank=False,null=False,default='2020-12-12')
     date_init = models.DateField(blank=False,null=False,default='2020-12-12')
     details = models.CharField(max_length=300,blank=False,null=False,default='2020-12-12')
-    project_title = models.CharField(max_length=60,blank=False,null=False,default='2020-12-12')
+    project_title = models.CharField(max_length=60,blank=False,null=False,default='titulo')
     status = models.CharField(max_length=20,blank=False,null=False,default='2020-12-12')

@@ -2,18 +2,62 @@
 {% load static %}
 
 {% block top-message %}
-  <button class="btn btn-sm btn-primary" id="parapost">Consultar eventos</button>
+  <h3>Calendario</h3>
 {% endblock %}
 
 {% block head %}
+  <!-- Datepicker -->
+  <link rel="stylesheet" href="{% static 'bootstrap-datepicker.min.css' %}">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+  <script src="{% static 'bootstrap-datepicker.js' %}"></script>
 {% endblock %}
 
 {% block page-heading-content %}
   <div class="calendar num">
-      
+    <div class="row">
+      <div class="col-9"></div>
+      <div class="col-3"><button class="btn btn-sm btn-success mb-4" id="parapost">Calendarizar evento</button></div>
+    </div>
       {{calendar|safe}}
   </div>
 
+<!-- event modal -->
+<div class="modal fade" id="insc_event" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header row">
+          <div class="col-8"><h5 class="modal-title">Calendarizar Evento </h5></div>
+          <div class="col-1">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body" style="overflow-y: scroll;max-height: 700px;" id="teams_body">
+        <table class="table_hours">
+          <thead>
+            <tr>
+              <th class="table-info" style="width: 300px;">Equipo</th>
+              <th class="table-info" style="width: 200px;">Integrantes Inscritos</th>
+            </tr>
+          </thead>
+          <tbody id="list_teams">
+              <tr>
+                <!--teams-->
+                <td class="table-info" style="text-align: center;"> </td>
+                <!--n° athletes-->
+                <td class="table-warning"> </td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <!--Espacio disponible para alguna funcionalidad-->
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -119,12 +163,109 @@
   <script>    
 
     $('#parapost').on('click',function(){
-      $.post("{% url 'logistic_view'%}",
-            {"consulta":1,"csrfmiddlewaretoken": "{{csrf_token}}",},
-             function(response){
-              console.log(response);
-             });
+      n_form = '<form class="user" method="post" action="{% url "entry_event" %}" autocomplete="off"> \
+                  {% csrf_token %} \
+                  <div class="row"> \
+                    <div class="col-1"></div> \
+                    <div class="form-group col-6">\
+                      <label for="text_id"> Titulo del Evento</label>\
+                      <input type="text" class="form-control" name="event_title" placeholder="Titulo del evento" id="text_id">\
+                    </div>\
+                    <div class="form-group col-4">\
+                      <label for="type_event"> Tipo de Evento</label>\
+                      <select class="form-control" name="event_type" id="place_id">\
+                          <option value="0" selected disabled hidden> Seleccione tipo de evento</option>\
+                          <option value="1"> Evento en general</option>\
+                          <option value="2"> Torneo deportivo individual</option>\
+                          <option value="3"> Torneo deportivo por equipos</option>\
+                          <option value="4"> Otro tipo (EJ: Taller)</option>\
+                      </select>\
+                    </div>\
+                  </div> \
+                  <div class="row"> \
+                    <div class="col-1"></div> \
+                      <div class="form-group col-3">\
+                      <label for="place_id">Lugar del evento:</label>\
+                      <select class="form-control" name="event_place" id="place_id">\
+                        <option value="0" selected disabled hidden> Seleccione Lugar</option>\
+                        <option value="1"> Multicancha</option>\
+                        <option value="2"> Pista Atlética</option>\
+                        <option value="3"> Piscina</option>\
+                        <option value="4"> Cancha de Fútbol</option>\
+                        <option value="5"> Otro</option>\
+                      </select>\
+                    </div>\
+                    <div class="col-3">\
+                      <label> Seleccione Fecha</label>\
+                      <div class="input-group date">\
+                        <input type="text" name="event_date" class="form-control"><span class="input-group-addon ml-1">\
+                          <svg width="2.2em" height="2.2em" viewBox="0 0 16 16" class="bi bi-calendar3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">\
+                          <path fill-rule="evenodd" d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>\
+                          <path fill-rule="evenodd" d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>\
+                          </svg>\
+                        </span>\
+                      </div> \
+                    </div> \
+                    <div class="col-2">\
+                      <label> Hora de inicio</label>\
+                      <div class="input-group" id="f_hour">\
+                          <input type="text" name="init_hour" class="form-control"><span class="input-group-addon ml-1">\
+                          <svg width="2.2em" height="2.2em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">\
+                          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>\
+                          <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>\
+                          </svg>\
+                          </span>\
+                      </div>\
+                    </div>\
+                    <div class="col-3">\
+                      <label> Hora de termino</label>\
+                      <div class="input-group" id="f_hour">\
+                          <input type="text" name="finish_hour" class="form-control"><span class="input-group-addon ml-1">\
+                          <svg width="2.2em" height="2.2em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">\
+                          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>\
+                          <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>\
+                          </svg>\
+                          </span>\
+                      </div>\
+                    </div>\
+                  </div>\
+                  <div class="row"> \
+                    <div class="col-1"></div> \
+                    <div class="col-6"> \
+                      <label for="specification_event">Especifique detalles del evento:</label>\
+                      <textarea class="form-control limit" name="spe_ev" id="specification_event" maxlength="300" rows="3"></textarea>\
+                      <p class="counter" style="float: right" >0/300</p>\
+                    </div>\
+                  </div>\
+                  <div class="row"> \
+                    <input type="hidden" name="e_request" value="NoRequest"> \
+                    <input type="hidden" name="client_pk" value="1"> \
+                    <div class="col-1"></div> \
+                    <div class="col-4"> \
+                      <button type="submit" class="btn btn-sm btn-primary mt-2">Inscribir</button> \
+                    </div> \
+                  </div>\
+                </form>'
+
+      $('#teams_body').html(n_form);
+      $('#insc_event').modal('show');
     });
+
+    $('.input-group.date').datepicker({
+      startDate:'24-09-2020',
+      format: 'yyyy-mm-dd',
+      weekStart: 1,
+      autoclose: true,
+      language:'es'
+    });
+
+    $('#specification_event').on('input',function(){
+      if(this.value.length>250){
+        this.rows = 5;
+      }
+      $('.counter')[0].textContent=this.value.length+"/20";
+    });
+
     $('.day').on('click',function(e){
       list_days = {{disponibility | safe}};
       data_day = list_days[this.id-1];
@@ -153,3 +294,4 @@
 {% block active-logistics %}
   <i class="fas fa-fw fa-circle "></i>
 {% endblock %}
+

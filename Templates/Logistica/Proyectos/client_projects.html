@@ -1,0 +1,52 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+{% block head %}  
+{% endblock %}
+
+{% block top-message %}
+  <h3>Proyectos</h3>
+{% endblock %}
+
+{% block page-heading-content %}
+<table class="table">
+  <thead style="background-color: rgb(162, 154, 134);">
+    <tr>
+      <th style="color: beige;"> ID </th>
+      <th style="color: beige;"> Projecto</th>
+      <th style="color: beige;"> Detalles</th>
+      <th style="color: beige;"> Plazo inicial </th>
+      <th style="color: beige;"> Plazo final </th>
+      <th style="color: beige;"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% if kwargs %}
+    {% for x in kwargs %}
+        <tr>
+          <th> {{x.pk}}</th>
+          <th> {{x.project_title}}</th>
+          <th> {{x.details}}</th>
+          <th> {{x.date_init}}</th>
+          <th> {{x.date_finish}}</th>
+          <th>
+            {% if x.get_type == 'event' %}
+              <a class="btn btn-sm btn-info " href="{% url 'client_review' x.pk 0 %}" role="button"> Ver </a>
+            {% endif %}
+            {% if x.get_type == 'info' %}
+              <a class="btn btn-sm btn-info " href="{% url 'client_review' x.pk 1 %}" role="button"> Ver </a>
+            {% endif %}
+          </th>
+        </tr>
+    {% endfor %}
+  {% endif %}
+  </tbody>
+</table>
+
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}
+
+

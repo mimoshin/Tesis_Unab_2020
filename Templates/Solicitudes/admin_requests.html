@@ -1,11 +1,11 @@
 {% extends 'base_admin.html' %}
 {% load static %}
 
-{% block page-heading-content %}
-  <div class="d-sm-flex align-items-center mb-0 "><!-- d-sm-flex (responsive) -->
-    <h1>Solicitudes (Admin)</h1>
-  </div>
+{% block top-message %}
+  <h3>Solicitudes</h3>
+{% endblock %}
 
+{% block page-heading-content %}
   <table class="table table-striped ">
     <thead style="background-color: rgb(255,200,65);">
       <tr>
