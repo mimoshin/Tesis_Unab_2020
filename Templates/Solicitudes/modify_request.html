@@ -9,8 +9,9 @@
       <h1 class="h3 mb-0 text-gray-800">Modificar solicitud N°: {{kwargs.pk}}</h1>
       <a class="btn btn-info btn-sm ml-auto" href="{% url 'requests_views' %}">Volver</a>
     </div>
-    
-    <form class='user' method="post" action="{% url 'modify_request' kwargs.pk %}">
+      
+    {% if kwargs.get_type == 'event' %}
+    <form class='user' method="post" action="{% url 'modify_request' 'event' kwargs.pk %}">
       {% csrf_token %}
 
       <!--first row-->
@@ -138,6 +139,7 @@
       
       <button type="submit" class ="btn btn-primary btn-user btn-block">Modificar</button>
     </form>
+    {% endif %}
   </div>
 {% endblock %}
 

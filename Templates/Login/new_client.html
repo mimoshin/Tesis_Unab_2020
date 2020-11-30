@@ -36,7 +36,12 @@
     </div> 
     
     <div class="form-group">
-      <input type="text" class="form-control form-control-user" name="type" placeholder="club deportivo, empresa, etc">
+      <select name="type_corp">
+        <option value="0"selected disabled hidden> Seleccione tipo</option>
+        <option value="1">Club deportivo</option>
+        <option value="2">Empresa</option>
+        <option value="3">Particular</option>
+      </select>
     </div> 
 
     <button type="submit" class ="btn btn-primary btn-user btn-block">Registrar</button>

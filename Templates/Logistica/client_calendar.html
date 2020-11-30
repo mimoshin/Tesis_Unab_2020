@@ -6,19 +6,6 @@
 
 {% block page-heading-content %}
   <div class="calendar num">
-    <div class="container mb-2">
-      {% if next == 1%}
-        <a href="{% url 'logistic_view' %}?month={{next}}&year={{next_year}}" class="btn btn-sm btn-primary float-right ml-1">Next</a>
-      {% else %}
-        <a href="{% url 'logistic_view' %}?month={{next}}&year={{year}}" class="btn btn-sm btn-primary float-right ml-1">Next</a>
-      {% endif %}
-      {% if prev == 12%}
-        <a href="{% url 'logistic_view' %}?month={{prev}}&year={{prev_year}}" class="btn btn-sm btn-primary float-right">Prev</a>
-      {% else %}
-        <a href="{% url 'logistic_view' %}?month={{prev}}&year={{year}}" class="btn btn-sm btn-primary float-right">Prev</a>
-      {% endif %}
-      
-    </div>
       {{calendar|safe}}
   </div>
 

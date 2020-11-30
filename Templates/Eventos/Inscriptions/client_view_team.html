@@ -1,0 +1,79 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+{% block top-message %}
+  <h1>Inscribir equipo</h1>
+{% endblock %}
+
+
+{% block page-heading-content %}
+<div class="row">
+  <div class="col-11"></div>
+  <div class="col-1">
+    <a type="button" class="btn btn-sm btn-info " href="{% url 'review_event' 'team' kwargs.event.pk %}">Volver</a>
+  </div>
+</div>
+{% if kwargs %}
+<div class="row" style="background-color:khaki;">
+  <div class="col-4 mt-2">
+    <h5>Equipo:</h5>
+    <p>{{kwargs.name}}</p>
+  </div>
+
+  <div class="col-4 mt-2">
+    
+  </div>
+
+  <div class="col-4 mt-2">
+    
+  </div>
+</div>
+
+<div class="row" style="background-color:lavender">
+  <div class="col-12 mt-2">
+    <div class="row">
+      <div class="col-9">
+        <h5>Titulares</h5>
+      </div>
+      <div class="col-3">
+        
+      </div>
+    </div>
+    
+    <ul id="list_athletes"> 
+      {% for x in athletes %}
+        {% if x.position == 'Titular' %}
+          <li>Nombre: {{x.first_name}} {{x.last_name}} | Edad: {{x.age}} | Email: {{x.email}}</li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="row" style="background-color:khaki">
+  <div class="col-12 mt-2">
+    <div class="row">
+      <div class="col-9">
+        <h5>Reservas</h5>
+      </div>
+      <div class="col-3">
+        
+      </div>
+    </div>
+    <ul id="list_reserve"> 
+      {% for x in athletes %}
+        {% if x.position == 'Reserva' %}
+          <li>Nombre: {{x.first_name}} {{x.last_name}} | Edad: {{x.age}} | Email: {{x.email}}</li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+
+{% endblock %}
+
+{% block active-events %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

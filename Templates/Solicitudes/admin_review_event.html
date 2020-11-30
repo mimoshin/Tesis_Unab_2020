@@ -19,7 +19,7 @@
           <path fill-rule="evenodd" d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
           <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
         </svg> Autor:</h5>
-      <p>{{kwargs.petitioner.client_person.first_name}} {{kwargs.petitioner.client_person.last_name}} &nbsp;</p>
+      <p>{{kwargs.petitioner.log_user.first_name}} {{kwargs.petitioner.log_user.last_name}} &nbsp;</p>
     </div>
 
     <div class="col-4 mt-2">
@@ -52,7 +52,7 @@
           <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
           <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
         </svg> Fecha requerida:</h5>
-      <p>{{kwargs.event_date}}</p>
+      <p>{{kwargs.event_date.isoformat}}</p>
     </div>
   </div>
 
@@ -86,6 +86,7 @@
       <h5>Estado:</h5>
       <p>{{kwargs.status}}</p>
     </div>
+    
   </div>
 
   <div class="row" style="background-color:khaki">
@@ -101,9 +102,9 @@
   {% else %}
     <div class="row mt-4" id="ac_button">
       <div class='col-4'></div>
-      <button class='btn btn-sm btn-success ar_button' value="0">Aprobar</button>
+      <button class='btn btn-sm btn-success' id="acept" value="0">Aprobar</button>
       <div class='col-2'></div>
-      <button class='btn btn-sm btn-danger ar_button' value="1">Rechazar</button>
+      <button class='btn btn-sm btn-danger' id="reject" value="1">Rechazar</button>
     </div>
   {% endif %}
   <!--observation modal -->
@@ -133,7 +134,7 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Verificar disponibilidad </h5>
+          <h6 class="modal-title" >Verificar disponibilidad: {{kwargs.event_date.isoformat}} </h6>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -182,12 +183,11 @@
             <h4 class="alert-heading">Enhorabuena</h4>
             <p>El horario y zona deseada esta disponible, puede proceder a calendarizar el evento </p>
           </div>
-          <div class="alert alert-danger" role="alert" id="bad_alert">
-            <h4 class="alert-heading">Malas noticias</h4>
+          <div class="alert alert-danger alert-sm" role="alert" id="bad_alert">
+            <h5 class="alert-heading">Malas noticias</h5>
             <p>El horario y zona deseada no esta disponible, por lo cual no es posible calendarizar el evento </p>
           </div>
           <div>
-              <button type="button" class="btn btn-secondary" id="return" data-dismiss="modal">volver</button>
               <button type="button" class="btn btn-success" id="question"> Comprobar </button>
               <button type="submit" class="btn btn-primary" id="continue">Continuar</button>
           </div>
@@ -215,8 +215,8 @@
   </style>
 
   <script type="text/javascript">
-    var one_split = ''
-    var button_con = 0;
+    data_day = '';
+    button_con = 0;
     $(document).ready(function(){
       $('#continue').toggle();
       $('#bad_alert').hide();
@@ -230,90 +230,80 @@
         }
     });
 
+
     $('#obs').on('click',function(){
       $('#obs_modal').modal('show');
     });
 
-    $('.ar_button').on('click',function(){
-      if(this.value == 0){
-        $.post("{% url 'request_day' %}",{"pk_request":'{{kwargs.pk}}',"csrfmiddlewaretoken": "{{csrf_token}}",},
+    $('#acept').on('click',function(){
+      $.post("{% url 'request_day' %}",{"date":'{{kwargs.event_date.isoformat}}',"csrfmiddlewaretoken": "{{csrf_token}}",},
           function(response){
-            one_split = response.split(';');
-            body = $('.body_hours');
-            text = '';
-            
-            for(x= 0;x<16;x++){
-              second_split = one_split[x].split(',');
-              text = text+'<tr><td class="table-info" id="'+x+'-0"style="text-align:center;">'+second_split[0].slice(2,-1)+'</td>';
-              for(y=1;y<7;y++){
-                if(second_split[y].includes('none')){
-                  text = text+'<td class="table-warning" id="'+x+'-'+y+'"><button class="btn"></button></td>';
-                }
-                else{
-                  text = text+'<td class="table-warning" id="'+x+'-'+y+'"><button class="btn">'+ second_split[y].slice(0,-1)+'</button></td>';
-                }
-              }
-            }
-          text = text+'</tr>';
-          $('.body_hours').html(text);
+            data_day = response;
+          $('.body_hours').html(response);
         });
         $('#event_modal').modal('show');
-      }
-      else if(this.value == 1){
-        $.post("{% url 'review_request' 0 0 %}".replace('0','{{kwargs.pk}}'),
+    });
+
+    $('#reject').on('click',function(){
+      $.post("{% url 'review_request' 0 0 %}".replace('0','{{kwargs.pk}}'),
               {"estado":1,"csrfmiddlewaretoken": "{{csrf_token}}",},
               function(response){
                   location.reload();
         }); 
-      }
     });
 
     $('#question').on('click',function(e){
       init = '{{kwargs.init_hour}}'.split(' ');
       finish = '{{kwargs.finish_hour}}'.split(' ');
 
-      if (init[1] == 'p.m.') {init = parseInt(init[0])+12;}
+      if (init[1] == 'p.m.'){
+        init = parseInt(init[0])+12;
+      }
 
-      else {init = parseInt(init[0]);}
+      else{
+        init = parseInt(init[0]);
+      }
 
-      if (finish[1] == 'p.m.') {finish = parseInt(finish[0])+12;}
+      if (finish[1] == 'p.m.'){
+        finish = parseInt(finish[0])+12;
+      }
 
-      else {finish = parseInt(finish[0]);}
+      else {
+        finish = parseInt(finish[0]);
+      }
 
       duration = finish-init;
       index ='{{kwargs.event_place}}';
       h_count = 0;
       for(x=(init-8) ;x<(finish-8);x++){
-        second_split = one_split[x].split(',');
         id_button = '#'+x+'-'+index;
-        if(second_split[index].includes('none')){
-            button = $('0'.replace(0,id_button));
-            button[0].className ='table-success';
-            h_count +=1;
-          }
-          else{
-            button = $('0'.replace(0,id_button));
-            button[0].className ='table-danger';
-          }
+        piece = $('0'.replace(0,id_button));
+        if(piece.text() && piece.text()!= 'Disponible' ){ 
+          $('0'.replace(0,id_button))[0].className ='table-danger';
         }
+        else{
+          $('0'.replace(0,id_button))[0].className ='table-success';
+          $('0'.replace(0,id_button)).html('Disponible');
+          h_count +=1;
+        }
+      }
       if(h_count == duration){
-        comprobe = $('#question');
-        contin = $('#continue');
-        comprobe.toggle();
-        contin.toggle();
+        $('#question').toggle();
+        $('#continue').toggle();
         button_con =1;
         $('#good_alert').toggle();
       }
       else{
         button_con = 2;
+        $('#question').toggle();
         $('#bad_alert').toggle();
-        
       }
     });
 
     $('#event_modal').on('hidden.bs.modal',function(e){
       if(button_con==2){
         $('#bad_alert').toggle();
+        $('#question').toggle();
         button_con = 0;
       }
       if(button_con==1){
@@ -331,7 +321,6 @@
                 location.reload();
               });
     });
-
   </script>
 {% endblock %}
 

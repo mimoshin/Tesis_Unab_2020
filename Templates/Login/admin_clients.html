@@ -14,11 +14,12 @@
   <table class="table">
     <thead>
       <tr class="table-info">
-        <th> Nombre</th>
+        <th></th>
+        <th>Nombre cliente</th>
         <th>Apellido</th>
         <th>Correo</th>
-        <th>Corp. o Club</th>
-        <th>Opciones</th>
+        <th>Representa</th>
+        <th></th>
         <th></th>
       </tr>
     </thead>
@@ -27,15 +28,21 @@
         <thead>
           <tr>
             <th>{{x.pk}}</th>
-            <th>{{x.client_person.first_name}}</th>
-            <th>{{x.client_person.last_name}}</th>
-            <th>{{x.client_person.email}}</th>
+            <th>{{x.log_user.first_name}}</th>
+            <th>{{x.log_user.last_name}}</th>
+            <th>{{x.log_user.email}}</th>
+            {% if x.client_type == 1 %}
+              <th>Club deportivo</th>
+            {% elif x.client_type == 2 %}
+              <th>Empresa</th>
+            {% elif x.client_type == 3 %}
+              <th>Particular</th>
+            {% endif %}
             <th>{{x.corp}}</th>
-            <th>{{x.client_type}} </th>
             <th>
-              <a class="btn btn-success btn-sm" href="{% url 'modify_client' x.client_person.pk %}" role="button"> Modificar </a>
-              <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal_delete" id="delete" value="{{x.client_person.pk}}">
-                      Elimina cliente
+              <a class="btn btn-success btn-sm" href="{% url 'modify_client' x.log_user.pk %}" role="button"> Modificar </a>
+              <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal_delete" id="delete" value="{{x.log_user.pk}}">
+                      Eliminar
               </button>
             </th>
           </tr>
@@ -56,7 +63,7 @@
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
           <form action="action" method="post" id="delete_form">
             {% csrf_token %}
-            <button class="btn btn-danger btn-ok"> Si, estoy Seguro</button>
+            <button class="btn btn-danger"> Si, estoy Seguro</button>
           </form>
         </div>
       </div>
@@ -65,7 +72,6 @@
 
   <script>
     $('#delete').on('click',function(){
-      console.log(this.value);
       $('#delete_form')[0].action = "{% url 'delete_client' 0 %}".replace('0',this.value);
     });
   </script>

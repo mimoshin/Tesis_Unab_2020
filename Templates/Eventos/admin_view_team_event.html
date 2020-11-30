@@ -5,7 +5,7 @@
   <div class="d-sm-flex align-items-center mb-2 ">
     <h2>Torneo por equipos</h2>
     <a class="btn btn-info btn-sm ml-auto" href="{% url 'events_view' %}">Volver</a>
-    {% if kwargs.status != 'Rechazado' and kwargs.status != 'Aprobado'  %} 
+    {% if kwargs.status == 'Por realizar'  %}  
       <button class="btn btn-warning btn-sm mr-2 ml-2" id="obs">Observación</button>
     {% endif %}    
   </div>
@@ -19,24 +19,24 @@
 
     <div class="col-4 mt-2">
       <h5>Club encargado:</h5>
-      <p>ASIGNAR CLUB</p>
+      <p>{{kwargs.organizer.corp}}</p>
     </div>
 
     <div class="col-4 mt-2">
       <h5>Fecha</h5>
-      <p>ASIGNAR FECHA</p>
+      <p>{{kwargs.event_date}}</p>
     </div>
   </div>
     
   <div class="row" style="background-color:lavender">
     <div class="col-4 mt-2">
-
+      <p> _ </p>
     </div>
     <div class="col-4 mt-2">
-
+      <p> _ </p>
     </div>
     <div class="col-4 mt-2">
-      <p>SPACING</p>
+      <p> _ </p>
     </div>
   </div>
 
@@ -48,7 +48,7 @@
           <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
         </svg>
         Hora inicio :</h5>
-      <p>ASIGNAR HORAS</p>
+      <p>{{kwargs.init_hour}}</p>
     </div>
     <div class="col-4 mt-2">
       <h5>
@@ -57,11 +57,11 @@
           <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
         </svg>
         Hora fin :</h5>
-      <p>ASIGNAR HORAS</p>
+      <p>{{kwargs.finish_hour}}</p>
     </div>
     <div class="col-4 mt-2">
       <h5 >Zona:</h5>
-      <p>ASIGNAR ZONA</p>
+      <p>{{kwargs.event_place}}</p>
     </div>
   </div>
 
@@ -70,19 +70,31 @@
       <h5>Estado:</h5>
       <p>{{kwargs.status}}</p>
     </div>
+    <div class="col-4 mt-2">
+      <p> _ </p>
+    </div>
+    <div class="col-4 mt-2">
+      <p> _ </p>
+    </div>
   </div>
 
   <div class="row" style="background-color:khaki">
-    <div class="col-12 mt-2">
-      <p>SPACING</p>
+    <div class="col-4 mt-2">
+      <p> _ </p>
+    </div>
+    <div class="col-4 mt-2">
+      <p> _ </p>
+    </div>
+    <div class="col-4 mt-2">
+      <p> _ </p>
     </div>
   </div>
     
   <div class="row">
     <div class="col-4"></div>
     <div class="col-6">
-      <button class="btn btn-md btn-success mt-2" id="inscription">ver inscripciones</button>
-    </div>
+      <button class="btn btn-md btn-success mt-2" id="view_inscription">ver inscripciones</button>
+    </div>    
   </div>
   {% endif %}
 
@@ -118,7 +130,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body" style="overflow-y: scroll;max-height: 700px;">
+        <div class="modal-body" style="overflow-y: scroll;max-height: 700px;" id="teams_body">
           <table class="table_hours">
             <thead>
               <tr>
@@ -161,29 +173,72 @@
     }
   </style>
 
-  <script type="text/javascript">
-    $('#inscription').on('click',function(){
-      $.post("{% url 'question_teams' %}",
-      {'event':{{kwargs.pk}},"csrfmiddlewaretoken": "{{csrf_token}}"},
-      function(response){
-        max = response.length;
-        text = '';
-        for(x= 0;x<max;x++){
-            console.log(response[x]);
-            url ="{% url 'events_view'%}"
-            text = text+"<tr><td class='table-warning' style='text-align: center;'><a type='button' href='"+url+"'class='btn'>"+response[x]['name']+"</a></td>"
-            text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['total_atheteles']+"</td></tr>"
-        }    
-        $('#list_teams').html(text);
-      });
-      $('#insc_modal').modal('show');
-    });
+<script type="text/javascript">
+  aux_body = ''
 
-    $('#obs').on('click',function(){
-      $('#obs_modal').modal('show');
-    });
+  $(document).ready(function(){
+    aux_body = $('#teams_body')[0].innerHTML;
+  })
 
-  </script>
+  $('#view_inscription').on('click',function(){
+    $('#teams_body').html(aux_body);
+    $.post("{% url 'question_teams' %}",
+    {'event':{{kwargs.pk}},"csrfmiddlewaretoken": "{{csrf_token}}"},
+    function(response){
+      max = response.length;
+      text = '';
+      for(x= 0;x<max;x++){
+          console.log(response[x]);
+          url ="{% url 'view_team' 0 %}".replace('0',response[x]['id']);
+          total = response[x]['athletes']+response[x]['reserve']
+          text = text+"<tr><td class='table-warning' style='text-align: center;'><a type='button' href='"+url+"'class='btn'>"+response[x]['name']+"</a></td>"
+          text = text+"<td class='table-warning' style='text-align: center';>"+total+"</td>"
+          if(total <10){
+            text = text+ "<td style='text-align: center';> \
+                            <a type='button' class='btn btn-sm btn-primary' href='{% url 'team_inscription' 99 %}'>Inscribir integrante</a>\
+                          </td></tr>".replace('99',response[x]['id']);
+          }
+          else{
+            text = text+"</td></tr>";
+          }
+                       
+      }    
+      $('#list_teams').html(text);
+    });
+    $('#insc_modal').modal('show');
+  });
+
+  $('#obs').on('click',function(){
+    $('#obs_modal').modal('show');
+  });
+
+  $('#new_team').on('click',function(){
+    event_pk = '{{kwargs.pk}}';
+    url = '{% url "view_event" "team" 0 %}'.replace('0',event_pk);
+    n_form = '<form class="user" method="post" action="'+url+'" autocomplete="off"> \
+                {% csrf_token %} \
+                <div class="row"> \
+                  <div class="col-1"></div> \
+                  <div class="form-group col-6"> \
+                    <label for="team">Nombre del equipo</label> \
+                    <input type="text" class="form-control" name="team_name" placeholder="Cerro Navia F.C" id="team"> \
+                  </div> \
+                  <div class="form-group col-4"> \
+                    <label for="text_id" >Maximo n° integrantes</label> \
+                    <p class="mt-2" style="text-align: center;">10</p> \
+                  </div> \
+                </div> \
+                <div class="row"> \
+                  <div class="col-1"></div> \
+                  <div class="col-4"> \
+                    <button type="submit" class="btn btn-sm btn-primary">Inscribir</button> \
+                  </div> \
+                </div> \
+              </form>';
+    $('#teams_body').html(n_form);
+  });
+  
+</script>
 {% endblock %}
 
 {% block active-events %}

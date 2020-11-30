@@ -118,7 +118,9 @@
         <div id="content">
           <!-- Topbar -->
           <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow" >
+            {% block top-message %}
             <a href="/indexcliente"><h1 class="h3 mb-0 text-gray-800">Bienvenido</h1></a>
+            {% endblock %}
             <!-- Topbar Navbar -->
             <ul class="navbar-nav ml-auto">  
               {% block alerts %}

@@ -1,26 +1,16 @@
 {% extends 'base_admin.html' %}
 {% load static %}
 
+{% block top-message %}
+  <button class="btn btn-sm btn-primary" id="parapost">Consultar eventos</button>
+{% endblock %}
+
 {% block head %}
 {% endblock %}
 
 {% block page-heading-content %}
   <div class="calendar num">
-    <div class="container mb-2">
-      <button class="btn btn-sm btn-primary" id="parapost">Consultar eventos</button>
-      <!--<a href="#" class="btn btn-sm btn-primary float-right ml-1">Calendarizar evento</a>-->
-      {% if next == 1%}
-        <a href="{% url 'logistic_view' %}?month={{next}}&year={{next_year}}" class="btn btn-sm btn-primary float-right ml-1">Next</a>
-      {% else %}
-        <a href="{% url 'logistic_view' %}?month={{next}}&year={{year}}" class="btn btn-sm btn-primary float-right ml-1">Next</a>
-      {% endif %}
-      {% if prev == 12%}
-        <a href="{% url 'logistic_view' %}?month={{prev}}&year={{prev_year}}" class="btn btn-sm btn-primary float-right">Prev</a>
-      {% else %}
-        <a href="{% url 'logistic_view' %}?month={{prev}}&year={{year}}" class="btn btn-sm btn-primary float-right">Prev</a>
-      {% endif %}
       
-    </div>
       {{calendar|safe}}
   </div>
 
@@ -35,7 +25,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" style="overflow-y: scroll;max-height: 300px;">
+      <div class="modal-body" style="overflow-y: scroll;max-height: 400px;">
         <table class="table_hours">
           <thead>
             <tr>
@@ -75,8 +65,10 @@
         </table>
       </div>
       <div class="modal-footer">
+        <!--
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary">Save changes</button>
+        -->
       </div>
     </div>
   </div>

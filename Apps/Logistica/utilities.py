@@ -41,31 +41,64 @@ def clean_disp():
             ['22:00 - 23:00 hrs','none','none','none','none','none','none'],['23:00 - 24:00 hrs','none','none','none','none','none','none']]
     return var
 
-
-def calendar_month(year,month,events):
+aux = None
+def calendar_month(year,month,events,data):
     h_c = custom_calendar()
+    h_c.data = data
     h_c.load_events(events)
     return h_c.formatmonth(year,month)
 
 def load_day():
-    day = ''
-    for x in clean_disp():
-        day+=str(x)+';'
-    return day
+    """
+    Retorna la tabla de un dia 
+    """
+    day = clean_disp()
+    text =''
+    for hour in range(15):
+        text = text+'<tr><td class="table-info" id=" %s-0"style="text-align:center;"> %s </td>' %(hour,day[hour][0])
+        for zone in range(1,7):
+            text = text+'<td class="table-warning" id="%s-%s"><button class="btn"></button></td>'% (hour,zone)
+    return text
 
 def load_events_day(events):
-    day = ''
     aux_c = custom_calendar()
     aux_c.disponibility = clean_disp()
-    for x in events:
-        e_day = x.e_request.event_date.day
-        e_title,e_zone = x.e_request.event_title, x.e_request.event_place
-        i_hour,f_hour  = x.e_request.init_hour, x.e_request.finish_hour
-        aux_c.hour_zone(e_title,e_zone,i_hour,f_hour)
+    for event in events:
+        if event.get_type() == 'Dep':
+            """
+            Evento dependiente de una solicitud
+            """
+            e_day = event.e_request.event_date.day
+            e_title,e_zone = event.e_request.event_title, event.e_request.event_place
+            i_hour,f_hour  = event.e_request.init_hour, event.e_request.finish_hour
+            aux_c.hour_zone(e_title,e_zone,i_hour,f_hour)
+        elif event.get_type() == 'Ind':
+            """
+            Evento independiente de una solicitud
+            """
+            e_day = event.event_date.day
+            e_title,e_zone = event.event_title, event.event_place
+            i_hour,f_hour  = event.init_hour,event.finish_hour
+            aux_c.hour_zone(e_title,e_zone,i_hour,f_hour)
+    
+    day = aux_c.disponibility
+    text =''
+    for hour in range(15):
+        text = text+'<tr><td class="table-info" id=" %s-0"style="text-align:center;"> %s </td>' %(hour,day[hour][0])
+        for zone in range(1,7):
+            if day[hour][zone] == 'none':
+                text = text+'<td class="table-warning" id="%s-%s"><button class="btn"></button></td>'% (hour,zone)
+            else:
+                text = text+'<td class="table-warning" id="%s-%s"><button class="btn">%s</button></td>' % (hour,zone,day[hour][zone])
+    
+    text = text+'</tr>'
+    try:
+        #data = aux_c.disponibility
+        aux_c.__delattr__()
+    except:
+        pass
 
-    for hour in aux_c.disponibility:
-        day+=str(hour)+';'
-    return day
+    return text
     
 
 #:::::::::::::::
@@ -74,7 +107,7 @@ class custom_calendar(HTMLCalendar):
     def load_events(self,events):
         self.events = events
         self.total_days = NUMBER_DAYS
-
+    
     def hour_zone(self,title,zone,init,finish):
         duration = finish.hour-init.hour
         for hour in range(duration):
@@ -164,13 +197,35 @@ class custom_calendar(HTMLCalendar):
     def formatmonthname(self, theyear, themonth, withyear=True):
         """
         Return a month name as a table row.
+        
+        DATA_DIC | Este diccionario contiene los datos necesarios para definir los botones siguiente y anterior
+        {'year':year,'next_year':next_year,'prev_year':prev_year,
+         'month':month,'prev_month':prev_month,'next_month':next_month}
+        
+        if next_month == 1: month = ['next_month'] | year = ['next_year']
+        else: month = ['next_month'] | year = ['year']
+        
+        if prev == 12: month = ['prev_month'] | year = ['prev_year']
+        else: month = ['prev_month'] | year = ['year']
+        
         """
+
+        if self.data['next_month'] == 1 :
+            next_button = "<th><a href='/logistica?month=%s&year=%s' class='btn btn-sm btn-primary '>Mes Siguiente</a></th>" % (self.data['next_month'],self.data['next_year'])
+        else:
+            next_button = "<th><a href='/logistica?month=%s&year=%s' class='btn btn-sm btn-primary '>Mes Siguiente</a></th>" % (self.data['next_month'],self.data['year'])
+        
+        if self.data['prev_month'] == 12:
+            prev_button = "<th><a href='/logistica?month=%s&year=%s' class='btn btn-sm btn-primary '>Mes Anterior</a></th>" % (self.data['prev_month'],self.data['prev_year'])
+        else:
+            prev_button = "<th><a href='/logistica?month=%s&year=%s' class='btn btn-sm btn-primary '>Mes Anterior</a></th>" % (self.data['prev_month'],self.data['year'])        
+
         if withyear:
             month = MONTHS[month_name[themonth]]
             s = '%s %s' % (month, theyear)
         else:
             s = '%s' % month_name[themonth]
-        return '<tr> <th colspan="7" class=" %s "> %s </th> </tr>' % (self.cssclass_month_head, s)
+        return '<tr> %s <th colspan="5" class=" %s" > %s </th> %s </td>' % (prev_button, self.cssclass_month_head, s, next_button)
         
 
     def formatmonth(self, theyear, themonth,withyear=True):
@@ -182,7 +237,9 @@ class custom_calendar(HTMLCalendar):
         a('<table border="0" cellpadding="0" cellspacing="0" class="%s">' % (
             self.cssclass_month))
         a('\n')
+        a('<thead>')
         a(self.formatmonthname(theyear, themonth, withyear=withyear))
+        a('</thead>')
         a('\n')
         a(self.formatweekheader())
         a('\n')

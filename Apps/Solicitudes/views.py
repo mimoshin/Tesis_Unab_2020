@@ -1,22 +1,10 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import Event_Request,Info_request
+from .models import Request_Factory
 from .forms import pruebaForm, otroForm
-from Login.models import Admin,Client
-from Login.utilities import type_user,load_notify,load_data
+from Login.models import User_Factory
+from Login.utilities import load_notify,load_data
 
 #:::::::::::::::::::Functions:::::::::::::::::::::
-def total_requests(**kwargs):
-    if kwargs.get('client'): #comprobar si recibo el parametro client
-        first = list(Event_Request.objects.filter(petitioner__client_person__pk=kwargs['client']))
-        second = list(Info_request.objects.filter(petitioner__client_person__pk=kwargs['client']))
-    else:
-        first = list(Event_Request.objects.all())
-        second = list(Info_request.objects.all())
-    
-    for x in second:
-        first.append(x)
-    return first    
-
 def load_client(user):
     client = Client.objects.get(client_person=user)
     return client
@@ -24,9 +12,9 @@ def load_client(user):
 
 
 #:::::::::::::::::::General_Views:::::::::::::::::
-#Requests_view
+#Index_equests_view
 def requests_view(request):
-    user_log = type_user(request.user)
+    user_log = User_Factory.get_type_user(request.user)
     if user_log == 'admin':
         return admin_requests(request)
     elif user_log == 'client':
@@ -38,7 +26,7 @@ def requests_view(request):
 #:::::::::::::::::::Admin_Views:::::::::::::::::::
 #Admin_requests_view
 def admin_requests(request):
-    requests_list = total_requests()
+    requests_list = Request_Factory.get_all()
     data = load_data(requests_list)
     if request.method == 'POST':
         pass
@@ -55,14 +43,13 @@ def review_request(request,pk_id,r_type):
 
 #Admin_review_request_event
 def review_request_event(request,pk_id):
-    object_request = Event_Request.objects.get(pk=pk_id)
+    object_request = Request_Factory.get_request('event',pk_id)
     data = load_data(object_request)
     if request.method == 'POST':
         d_rcvd = request.POST
         stat_obs = d_rcvd.get('estado'),d_rcvd.get('observation')
         if stat_obs[0]:
             object_request.set_status(stat_obs[0])
-            return HttpResponse('hola')
         elif stat_obs[1]:
             object_request.create_obs(stat_obs[1])
     if request.method == 'GET':
@@ -71,7 +58,7 @@ def review_request_event(request,pk_id):
 
 #Admin_review_request_info
 def review_request_info(request,pk_id):
-    object_request = Info_request.objects.get(pk=pk_id)
+    object_request = Request_Factory.get_request('info',pk_id)
     data = load_data(object_request)
     if request.method == 'POST':
         d_rcvd = request.POST
@@ -79,7 +66,6 @@ def review_request_info(request,pk_id):
         stat_obs = d_rcvd.get('estado'),d_rcvd.get('observation')
         if stat_obs[0]:
             object_request.set_status(stat_obs[0])
-            return HttpResponse('hola')
         elif stat_obs[1]:
             object_request.create_obs(stat_obs[1])
         elif response:
@@ -95,7 +81,8 @@ def review_request_info(request,pk_id):
 #Client_request_view
 def client_requests(request):
     pk = request.user.pk
-    requests_list = total_requests(client=pk)
+    requests_list = Request_Factory.get_all(client=pk)
+    #requests_list = total_requests(client=pk)
     data = load_data(requests_list)
     if request.method == 'POST':
         pass
@@ -108,13 +95,7 @@ def new_event_request(request):
     data = load_data()
     if request.method == 'POST':
         r_form = request.POST
-        client = load_client(request.user)
-        date_format = r_form['event_date']
-        print(date_format)
-        n_request = Event_Request(petitioner=client,event_title=r_form['event_title'],event_type=r_form['event_type'],event_place=r_form['event_place'],
-                                  status="Necesita revision",specification=r_form['spe_ev'],event_date=r_form['event_date'],init_hour=r_form['init_hour'],finish_hour=r_form['finish_hour'])  
-        #FALTA VALIDAR
-        n_request.save()
+        Request_Factory.create_request('event',request.user,r_form)
         return redirect('requests_views')
     if request.method == 'GET':
         pass
@@ -125,10 +106,7 @@ def new_info_request(request):
     data = load_data()
     if request.method == 'POST':
         r_form = request.POST
-        client = load_client(request.user)
-        n_request = Info_request(petitioner=client,event_title=r_form['info_title'],status="Necesita revision",specification=r_form['info_detail'])  
-        #FALTA VALIDAR
-        n_request.save()
+        Request_Factory.create_request('info',request.user,r_form)
         return redirect('requests_views')
     if request.method == 'GET':
         pass
@@ -143,7 +121,7 @@ def client_review(request,pk_id,r_type):
 
 #Client_review_request_event
 def client_review_event(request,pk_id):
-    object_request = Event_Request.objects.get(pk=pk_id)
+    object_request = Request_Factory.get_request('event',pk_id)
     data = load_data(object_request)
     if request.method == 'POST':
         d_rcvd = request.POST
@@ -159,7 +137,7 @@ def client_review_event(request,pk_id):
 
 #Client_review_request_event
 def client_review_info(request,pk_id):
-    object_request = Info_request.objects.get(pk=pk_id)
+    object_request = Request_Factory.get_request('info',pk_id)
     data = load_data(object_request)
     if request.method == 'POST':
         pass
@@ -168,18 +146,22 @@ def client_review_info(request,pk_id):
     return render(request,'Solicitudes/client_review_info.html',data)
 
 #Client_modify_request
-def modify_request(request,pk_id):
-    object_request = Event_Request.objects.get(pk=pk_id)
+def modify_request(request,r_type,pk_id):
+    templates = {'event':'Solicitudes/modify_request.html','info':'Solicitudes/modify_info_request.html'}
+    object_request = Request_Factory.get_request(r_type,pk_id)
     data = load_data(object_request)
     if request.method == 'POST':
-        d_rcvd = request.POST
+        print('hola')
+        print(request.path)
+        print(request.POST)
+        #d_rcvd = request.POST
         #print("cambiar datos")
         #print(request.POST)
         #print(type(object_request))
-        object_request.modify_request(request.POST)
+        #object_request.modify_request(request.POST)ss
     if request.method == 'GET':
         pass
-    return render(request,'Solicitudes/modify_request.html',data)
+    return render(request,templates[r_type],data)
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 

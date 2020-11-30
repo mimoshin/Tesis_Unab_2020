@@ -5,11 +5,10 @@
   <div class="d-sm-flex align-items-center mb-2 ">
     <h2>Torneo individual</h2>
     <a class="btn btn-info btn-sm ml-auto" href="{% url 'events_view' %}">Volver</a>
-    {% if kwargs.status != 'Rechazado' and kwargs.status != 'Aprobado'  %} 
+    {% if kwargs.status == 'Por realizar'  %} 
       <button class="btn btn-warning btn-sm mr-2 ml-2" id="obs">Observación</button>
     {% endif %}    
   </div>
-
   {% if kwargs %}
   <div class="row" style="background-color:khaki;">
     <div class="col-4 mt-2">
@@ -19,24 +18,24 @@
 
     <div class="col-4 mt-2">
       <h5>Club encargado:</h5>
-      <p>ASIGNAR CLUB</p>
+      <p>{{kwargs.organizer.corp}}</p>
     </div>
 
     <div class="col-4 mt-2">
       <h5>Fecha</h5>
-      <p>ASIGNAR FECHA</p>
+      <p>{{kwargs.event_date}}</p>
     </div>
   </div>
     
   <div class="row" style="background-color:lavender">
     <div class="col-4 mt-2">
-
+      <p> _ </p>
     </div>
     <div class="col-4 mt-2">
-
+      <p> _ </p>
     </div>
     <div class="col-4 mt-2">
-      <p>SPACING</p>
+      <p> _ </p>
     </div>
   </div>
 
@@ -48,7 +47,7 @@
           <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
         </svg>
         Hora inicio :</h5>
-      <p>ASIGNAR HORAS</p>
+      <p>{{kwargs.init_hour}}</p>
     </div>
     <div class="col-4 mt-2">
       <h5>
@@ -57,11 +56,11 @@
           <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
         </svg>
         Hora fin :</h5>
-      <p>ASIGNAR HORAS</p>
+      <p>{{kwargs.finish_hour}}</p>
     </div>
     <div class="col-4 mt-2">
       <h5 >Zona:</h5>
-      <p>ASIGNAR ZONA</p>
+      <p>{{kwargs.event_place}}</p>
     </div>
   </div>
 
@@ -70,11 +69,23 @@
       <h5>Estado:</h5>
       <p>{{kwargs.status}}</p>
     </div>
+    <div class="col-4 mt-2">
+      <p> _ </p>
+    </div>
+    <div class="col-4 mt-2">
+      <p> _ </p>
+    </div>
   </div>
 
   <div class="row" style="background-color:khaki">
-    <div class="col-12 mt-2">
-      <p>SPACING</p>
+    <div class="col-4 mt-2">
+      <p> _ </p>
+    </div>
+    <div class="col-4 mt-2">
+      <p> _ </p>
+    </div>
+    <div class="col-4 mt-2">
+      <p> _ </p>
     </div>
   </div>
     
@@ -85,6 +96,7 @@
     </div>
   </div>
   {% endif %}
+
 
   <!--observation modal -->
   <div class="modal fade" id="obs_modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -126,7 +138,6 @@
                 <th class="table-info" style="width: 200px;">Apellido</th>
                 <th class="table-info" style="width: 200px;">Edad</th>
                 <th class="table-info" style="width: 200px;">Estado</th>
-                <th class="table-info" style="width: 200px;">Club</th>
               </tr>
             </thead>
             <tbody id="list_teams">
@@ -177,8 +188,7 @@
             text = text+"<tr><td class='table-warning' style='text-align: center;'><a type='button' href='"+url+"'class='btn'>"+response[x]['first_name']+"</a></td>"
             text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['last_name']+"</td>"
             text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['age']+"</td>"
-            text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['status']+"</td>"
-            text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['club']+"</td></tr>"
+            text = text+"<td class='table-warning' style='text-align: center;''>"+response[x]['status']+"</td></tr>"
         }    
         $('#list_teams').html(text);
       });
