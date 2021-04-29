@@ -1,0 +1,101 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+{% block top-message %}
+  <h3>Eventos</h3>
+{% endblock %}
+
+
+{% block page-heading-content %}
+  <table class="table table-striped">
+    <thead class="head-danger">
+      <tr class="all-white">
+        <th> ID</th>
+        <th> Evento</th>
+        <th> Tipo</th>  
+        <th> N° Cupos</th>      
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if kwargs %}
+        {% for x in kwargs %}
+        <tr>
+          <th>{{x.pk}}</th>
+          <th> {{x.event_title}}</th>
+          {% if x.get_type == 1 %}
+            <th>Evento en general</th>
+          {% endif %}
+          {% if x.get_type == 2 %}
+            <th>Torneo individual</th>
+          {% endif %}
+          {% if x.get_type == 3 %}
+            <th>Torneo por equipos</th>
+          {% endif %}
+          {% if x.get_type == 4 %}
+            <th>Otro tipo</th>
+          {% endif %}
+          {% if x.max_teams%}
+          <th> {{x.max_teams}}</th>
+          <th><a class="btn btn-sm btn-success " href="{% url 'review_event' 'team' x.pk %}" role="button"> Ver </a></th>
+          {% elif x.max_athletes %}
+          <th> {{x.max_athletes}}</th>
+          <th><a class="btn btn-sm btn-success " href="{% url 'review_event' 'single' x.pk %}" role="button"> Ver </a></th>
+          {% elif x.max_person%}
+          <th> {{x.max_person}}</th>
+          <th><a class="btn btn-sm btn-success " href="{% url 'review_event' 'other' x.pk %}" role="button"> Ver </a></th>
+          {% endif %}
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+
+  <script>
+    $('.view').on('click',function(){
+      console.log(this.value);
+    });
+
+    $('#team').on('click',function(){
+      console.log("boton apretado");
+      $.post("{% url 'events_view' %}",
+            {"team":1,"csrfmiddlewaretoken": "{{csrf_token}}",},
+            function(response){
+              location.reload();
+             });
+    });
+    
+    $('#single').on('click',function(){
+      console.log("boton apretado");
+      $.post("{% url 'events_view' %}",
+            {"single":1,"csrfmiddlewaretoken": "{{csrf_token}}",},
+            function(response){
+              location.reload();
+             });
+    });
+
+    $('#other').on('click',function(){
+      console.log("boton apretado");
+      $.post("{% url 'events_view' %}",
+            {"other":1,"csrfmiddlewaretoken": "{{csrf_token}}",},
+            function(response){
+              location.reload();
+             });
+    });
+  </script>
+
+{% endblock %}
+
+{% block active-events %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

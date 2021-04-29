@@ -1,0 +1,135 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page-heading-content %}
+  <div class="d-sm-flex align-items-center mb-2 ">
+    <h2>Solicitud N°: {{kwargs.pk}}</h2>
+    <a class="btn btn-info btn-sm ml-auto" href="{% url 'requests_views' %}">Volver</a>
+  </div>
+
+  {% if kwargs %}
+  <div class="row" style="background-color:khaki;">
+    <div class="col-4 mt-2">
+      <h5>Titulo del Evento:</h5>
+      <p>{{kwargs.event_title}}</p>
+    </div>
+
+    <div class="col-4 mt-2">
+      <h5>Tipo de evento:</h5>
+      <p>{{kwargs.event_type}}</p>
+    </div>
+
+    <div class="col-4 mt-2">
+      <h5><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-event" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+        <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+      </svg>
+        Fecha de creacion:</h5>
+      <p>{{kwargs.time_create}}</p>
+    </div>
+  </div>
+    
+  <div class="row" style="background-color:lavender">
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
+          <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Hora inicio :</h5>
+      <p>{{kwargs.init_hour}}</p>
+    </div>
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
+          <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Hora fin :</h5>
+      <p>{{kwargs.finish_hour}}</p>
+    </div>
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-event" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+          <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+        </svg> Fecha requerida:</h5>
+      <p>{{kwargs.event_date}}</p>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:khaki">
+    <div class="col-4 mt-2">
+      <h5>Estado:</h5>
+      <p>{{kwargs.status}}</p>
+    </div>
+    <div class="col-4 mt-2">
+      
+    </div>
+    <div class="col-4 mt-2">
+      <h5 >Zona:</h5>
+      <p>{{kwargs.event_place}}</p>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:lavender">
+    <div class="col-4 mt-2">
+      <h5>Especificación:</h5>
+      <p>{{kwargs.specification}}</p>
+    </div>
+  </div>
+
+  
+  {% endif %}
+  {% if kwargs.status == 'Pendiente' or kwargs.status == 'Necesita revision' %}
+  {% if kwargs.modify_button %}
+  <div class="row mt-4" id="ac_button">
+    <div class='col-4'></div>
+      <a class="btn btn-success btn-sm ml-auto" href="{% url 'modify_request' kwargs.pk %}">Modificar solicitud</a>
+    <div class='col-2'></div>
+      <button class="btn btn-danger btn-sm ml-auto" id="cancel_option"> Cancelar solicitud </button>
+  </div>
+  {% endif %}
+  {% endif %}
+  
+<!-- Modal -->
+<div class="modal fade" id="cancel_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">¡¡Un Momento!! </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    
+      <div class="modal-body">
+        <p> ¿Esta seguro de cancelar la solicitud ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, no estoy seguro</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id='cancel_button'>Si, estoy seguro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <script type="text/javascript">
+    $('#cancel_option').on('click',function(){
+      $('#cancel_modal').modal('show');
+    });
+
+    $('#cancel_button').on('click',function(){
+      $.post("{% url 'client_review' 0 0 %}".replace('0','{{kwargs.pk}}'),
+          {'estado':'Cancelada','csrfmiddlewaretoken': '{{csrf_token}}',},
+          function(response){
+            window.location = (response);
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

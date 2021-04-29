@@ -1,0 +1,45 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+{% block head %}  
+{% endblock %}
+
+{% block title %}
+  <a href="/indexadmin"><h1 class="h3 mb-0 text-gray-800">Nueva Solicitud</h1></a>
+{% endblock %}
+
+{% block page-heading-content %}
+  
+  <!----hidden_info---->
+  <div class="d-flex" id="info_content">
+    <form method="post" action="{% url 'new_info_request' %}">
+      {% csrf_token %}
+
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="">Asunto: </label>
+            <input type="text" name="info_title" placeholder="Titulo...">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12"> 
+          <div class="form-group">
+            <label for="">Solicitud de informacion</label>
+            <textarea name="info_detail" cols="130" rows="10" placeholder="Escriba su consulta"></textarea>
+          </div>  
+        </div>
+      </div>
+
+      <button type="submit" class ="btn btn-primary btn-user btn-block">Generar Solicitud</button>
+      <hr>
+    </form>
+  </div>
+  <!----end_hidden_info---->  
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

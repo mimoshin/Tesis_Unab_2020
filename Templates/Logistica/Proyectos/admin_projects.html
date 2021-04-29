@@ -1,0 +1,76 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block top-message %}
+  <h3>Proyectos</h3>
+{% endblock %}
+
+{% block page-heading-content %}
+<div class="row">
+  <div class="col-10"></div>
+  <div class="col-2">
+      <a type="button" href="{% url 'create_project' %}" class="btn btn-primary btn-sm mb-1" >Publicar proyecto</a>
+  </div>
+</div>
+
+  <table class="table table-striped">
+    <thead class="head-secondary">
+      <tr class="all-white">
+        <th> ID </th>
+        <th> Projecto</th>
+        <th> Detalles</th>
+        <th> Plazo inicial </th>
+        <th> Plazo final </th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% if kwargs %}
+      {% for x in kwargs %}
+          <tr>
+            <th> {{x.pk}}</th>
+            <th> {{x.project_title}}</th>
+            <th> {{x.details}}</th>
+            <th> {{x.date_init}}</th>
+            <th> {{x.date_finish}}</th>
+            <th>
+              {% if x.get_type == 'event' %}
+                <a class="btn btn-sm btn-info " href="{% url 'client_review' x.pk 0 %}" role="button"> Ver </a>
+              {% endif %}
+              {% if x.get_type == 'info' %}
+                <a class="btn btn-sm btn-info " href="{% url 'client_review' x.pk 1 %}" role="button"> Ver </a>
+              {% endif %}
+            </th>
+          </tr>
+      {% endfor %}
+    {% endif %}
+    </tbody>
+  </table>
+
+  <script>
+
+    $('#nuevo').on('click',function(){
+      console.log("boton apretado");
+      $.post("{% url 'events_view' %}",
+            {"event_title":"torneo 1","event_type":"torneo por equipos","number_teams":"4","csrfmiddlewaretoken": "{{csrf_token}}",},
+            function(response){
+               console.log(response);
+             });
+    });
+    
+    $('#otro').on('click',function(){
+      console.log("boton apretado");
+      $.post("{% url 'events_view' %}",
+            {"algo":"4","csrfmiddlewaretoken": "{{csrf_token}}",},
+            function(response){
+               console.log(response);
+             });
+    });
+
+  </script>
+
+{% endblock %}
+
+{% block active-events %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

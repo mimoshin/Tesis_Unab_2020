@@ -1,210 +1,174 @@
 from django.shortcuts import render, redirect, HttpResponse
-from django.urls import reverse
-from Login.models import Client,Admin
-from Solicitudes.models import Event_Request
-from .models import event_calendar,other_event
-from .utilities import calendar_month,load_day,load_events_day
+from django.http import JsonResponse
 from datetime import date
+from Login.models import User_Factory
+from Solicitudes.models import Request_Factory
+from Eventos.models import Event_factory
+from .models import Calendar_Factory,project
+from .utilities import calendar_month, load_day, load_events_day,get_data_time
+
 
 
 
 #:::::::::::::::::::Functions:::::::::::::::::::::
-def load_events(month,year):
-    month_filter = r'{0}-{1}-.*'.format(str(year),str(month))
-    event_list = list(other_event.objects.filter(e_request__event_date__regex = month_filter))
-    return event_list
-
-def load_client_event(client_pk):
-    event_list = list(other_event.objects.filter(e_request__petitioner__client_person__pk=client_pk))
-    print('holi')
-    for x in event_list:
-        print('holi',x)
-    return event_list
-
-def events_day(filter_day):
-    month_filter = r'{0}'.format(filter_day)
-    event_list = list(other_event.objects.filter(e_request__event_date__regex = month_filter))
-    return event_list
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 #:::::::::::::::::::General_Views:::::::::::::::::
 def logistic_view(request):
-    user_log = request.user
-    admin = Admin.objects.filter(admin_person__username = user_log ).exists()
-    client = Client.objects.filter( client_person__username = user_log ).exists()
-    if request.method == 'POST':
-        if admin:
-            return admin_logistic(request)
-        if client:
-            return client_logistic(request)
-    if request.method == 'GET':
-        if admin:
-            return admin_logistic(request)
-        if client:
-            return client_logistic(request)
-        return redirect('/')
+    user_log = User_Factory.get_type_user(request.user)
+    if user_log == 'admin':
+        return admin_logistic(request)
+    elif user_log == 'client':
+        return client_logistic(request)
+    return render(request,'/')
+
+def projects_view(request):
+    user_log = User_Factory.get_type_user(request.user)
+    if user_log == 'admin':
+        return admin_projects(request)
+    elif user_log == 'client':
+        return client_projects(request)
+    return render(request,'/')
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 #:::::::::::::::::::Admin_Views:::::::::::::::::::
 def admin_logistic(request):
-    today = date.today()
+    if request.method == 'POST':
+        dates = get_data_time()
+        if request.POST.get('consulta'):
+            data = Calendar_Factory.get_events(dates['month'],dates['year'])
+            return HttpResponse(data)
+
+    elif request.method == 'GET':
+        d_recvd = request.GET
+        month,year = d_recvd.get('month'), d_recvd.get('year')
+        if month and year:
+            print("Cargando: data_time", month,year)
+            dates = get_data_time(Month=month,Year=year)
+        else:
+            print("Cargando: data_time")
+            dates = get_data_time()
+
+    print("Data_time: ",dates)
+    events = Calendar_Factory.get_all(dates['month'],dates['year'])
+    print("Eventos",events)
+    aux = calendar_month(dates['year'],dates['month'],events,dates)
+    return render(request,'Logistica/admin_calendar.html',{'calendar':aux['calendar'],'disponibility':aux['disp_days']})
+
+def admin_projects(request):
+    projects = project.objects.all()
     if request.method == 'POST':
         pass
-
     if request.method == 'GET':
-        d_recvd = request.GET
-        if d_recvd.get('month') and d_recvd.get('year'):
-            Month,Year = d_recvd['month'],d_recvd['year']
-            if Month:
-                month = int(Month)
-                if month == 12:
-                    prev_month = month-1
-                    next_month = 1
-                    year = int(Year)
-                    next_year = year+1
-                    prev_year = int(year)-1
-                    
-                elif month == 1:
-                    prev_month = 12
-                    next_month = month+1
-                    year = int(Year)
-                    next_year = int(year)+1
-                    prev_year = int(year)-1
-                    
-                else:
-                    prev_month = month-1
-                    next_month = month+1
-                    year = int(Year)
-                    next_year = year+1
-                    prev_year = int(year)-1
-                
-            else:
-                year = int(today.year)
-                next_year = year+1
-                prev_year = int(year)-1
-                month = int(today.month)
-                prev_month = int(today.month)-1
-                next_month = int(today.month)+1
-                
-        else: 
-            year = int(today.year)
-            next_year = year+1
-            prev_year = int(year)-1
-            month = int(today.month)
-            prev_month = int(today.month)-1
-            next_month = int(today.month)+1
-            #print("año: {0}  proximo año {1} mes: {2} proximo mes: {3} mes anterior: {4}".format(year,next_year,month,next_month,prev_month))
-        
-        events = load_events(month,year)
-        aux = calendar_month(year,month,events)
-            
-    return render(request,'Logistica/admin_calendar.html',{'calendar':aux['calendar'],'next':next_month,'prev':prev_month,'year':year,
-                          'prev_year':prev_year,'next_year':next_year,'events':events,'disponibility':aux['disp_days']})
+        pass
+    return render(request,'Logistica/proyectos/admin_projects.html',{'kwargs':projects})
+
+def create_project(request):
+    data = 'data'
+    if request.method == 'POST':
+        data_form = request.POST
+        print(data_form)
+        new_project = project(project_title=data_form['title'],date_init=data_form['init'],date_finish=data_form['finish'],details=data_form['details'])
+        new_project.save()
+        return redirect('projects_view')
+    if request.method == 'GET':
+        pass
+    return render(request,'Logistica/proyectos/new_project.html',{'kwargs':data})
 
 def request_day(request):
+    """
+    Consulta los eventos del dia indicado mediante una peticion POST
+    Retorna una lista que contiene la disponibilidad horaria del dia
+    """
     if request.method == 'POST':
-        d_recvd = request.POST
-        pk_request = d_recvd.get('pk_request')
-        event_data = Event_Request.objects.get(pk=pk_request)
-        events_list = events_day(event_data.event_date)
+        date= request.POST.get('date')
+        events_list = Calendar_Factory.get_all_day(date)
         total = len(events_list)
         if total == 0:
             day_hours = load_day()
             return HttpResponse(day_hours)
+            #return JsonResponse(data_day,safe=False)
         elif total > 0:
-            print()
             day_hours = load_events_day(events_list)
             return HttpResponse(day_hours)
-        
+            #return JsonResponse(day_hours,safe=False)
         else:
             print("Hay eventos: ",len(events_list))
         
-        #aux = calendar_month(year,month,events)
-        
     if request.method == 'GET':
         pass
     return redirect('/solicitudes')
 
+#entry_event_view
 def entry_event(request):
+    """
+    Crea el evento en el calendario de logistica relacionando el evento y la solicitud
+    """
     if request.method == 'POST':
-        d_recvd = request.POST
-        pk_request = d_recvd.get('e_request')
-        request_data = Event_Request.objects.get(pk=pk_request)
-        request_data.set_status('0')
-        new_event = other_event(e_request=request_data)
-        new_event.save()
-        return HttpResponse('holi')    
+        form_data = request.POST
+        validation = form_data.get('request')
+        if validation:
+            """
+            1° Obtener los datos de la solicitud | Solicitudes - Request_Factory | Object: Event_request
+            2° Crear evento con los datos de la solicitud | Eventos - Event_Factory | Object: Event_[TYPE_EVENT]
+            3° Calendariza el evento | Logistica - Calendar_Factory | Void
+            """
+            _id_ = form_data.get('id_request')
+            request_data = Request_Factory.get_request('event',_id_)
+            new_event = Event_factory.create_event(organizer='client',request=request_data)
+            Calendar_Factory.create_event('Dep',request_data,request.user,new_event)
+            request_data.set_status('0')
+            #Request_Factory.set_estatus(request_data,'0',request.user)
+            return HttpResponse('Creacion Correcto')    
+                
+        else:
+            """
+            1° Crear evento cargando los datos del formulario | organizer = admin
+            3° Calendariza el evento | Logistica - Calendar_Factory | Void
+            """
+            #organizer = User_Factory.get_client(form_data['client_pk'])
+            #new_event = Event_factory.create_event(organizer='admin',form=form_data,user=request.user.pk)
+            new_event = Event_factory.create_event(organizer='admin',form=form_data,user=request.user.pk)
+            Calendar_Factory.create_event('Ind','NoRequest',request.user,new_event)
         
     if request.method == 'GET':
         pass
-    return redirect('/solicitudes')
-
-    
-
+    return redirect('/Logistica')
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 #:::::::::::::::::::Client_Views::::::::::::::::::
 def client_logistic(request):
     pk = request.user.pk
-    today = date.today()
+    if request.method == 'POST':
+        dates = get_data_time()
+        if request.POST.get('consulta'):
+            data = Calendar_Factory.get_events(dates['month'],dates['year'])
+            return HttpResponse(data)
+            
+    elif request.method == 'GET':
+        d_recvd = request.GET
+        month,year = d_recvd.get('month'), d_recvd.get('year')
+        if month and year:
+            dates = get_data_time(Month=month,Year=year)
+        else:
+            dates = get_data_time()
+        
+    #events = Calendar_Factory.get_all(dates['month'],dates['year'])
+    events = Calendar_Factory.get_client_events(pk,dates['month'],dates['year'])
+    aux = calendar_month(dates['year'],dates['month'],events,dates)
+    return render(request,'Logistica/client_calendar.html',{'calendar':aux['calendar'],'disponibility':aux['disp_days']})
+
+def client_projects(request):
+    projects = project.objects.all()
     if request.method == 'POST':
         pass
-
     if request.method == 'GET':
-        d_recvd = request.GET
-        if d_recvd.get('month') and d_recvd.get('year'):
-            Month,Year = d_recvd['month'],d_recvd['year']
-            if Month:
-                month = int(Month)
-                if month == 12:
-                    prev_month = month-1
-                    next_month = 1
-                    year = int(Year)
-                    next_year = year+1
-                    prev_year = int(year)-1
-                    
-                elif month == 1:
-                    prev_month = 12
-                    next_month = month+1
-                    year = int(Year)
-                    next_year = int(year)+1
-                    prev_year = int(year)-1
-                    
-                else:
-                    prev_month = month-1
-                    next_month = month+1
-                    year = int(Year)
-                    next_year = year+1
-                    prev_year = int(year)-1
-                
-            else:
-                year = int(today.year)
-                next_year = year+1
-                prev_year = int(year)-1
-                month = int(today.month)
-                prev_month = int(today.month)-1
-                next_month = int(today.month)+1
-                
-        else: 
-            year = int(today.year)
-            next_year = year+1
-            prev_year = int(year)-1
-            month = int(today.month)
-            prev_month = int(today.month)-1
-            next_month = int(today.month)+1
-            #print("año: {0}  proximo año {1} mes: {2} proximo mes: {3} mes anterior: {4}".format(year,next_year,month,next_month,prev_month))
-        
-        events = load_client_event(pk)
-        aux = calendar_month(year,month,events)
-            
-    return render(request,'Logistica/client_calendar.html',{'calendar':aux['calendar'],'next':next_month,'prev':prev_month,'year':year,
-                          'prev_year':prev_year,'next_year':next_year,'events':events,'disponibility':aux['disp_days']})
-
-
+        pass
+    return render(request,'Logistica/proyectos/client_projects.html',{'kwargs':projects})
 #:::::::::::::::::::::::::::::::::::::::::::::::::
 
 

@@ -1,0 +1,52 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+{% block head %}  
+{% endblock %}
+
+{% block top-message %}
+  <h3>Proyectos</h3>
+{% endblock %}
+
+{% block page-heading-content %}
+<table class="table">
+  <thead class="head-secondary">
+    <tr class="all-white">
+      <th> ID </th>
+      <th> Projecto</th>
+      <th> Detalles</th>
+      <th> Plazo inicial </th>
+      <th> Plazo final </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% if kwargs %}
+    {% for x in kwargs %}
+        <tr>
+          <th> {{x.pk}}</th>
+          <th> {{x.project_title}}</th>
+          <th class="details"> {{x.details}}</th>
+          <th> {{x.date_init}}</th>
+          <th> {{x.date_finish}}</th>
+          <th>
+            {% if x.get_type == 'event' %}
+              <a class="btn btn-sm btn-info " href="{% url 'client_review' x.pk 0 %}" role="button"> Ver </a>
+            {% endif %}
+            {% if x.get_type == 'info' %}
+              <a class="btn btn-sm btn-info " href="{% url 'client_review' x.pk 1 %}" role="button"> Ver </a>
+            {% endif %}
+          </th>
+        </tr>
+    {% endfor %}
+  {% endif %}
+  </tbody>
+</table>
+
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}
+
+

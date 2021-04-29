@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-  <html lang="en">
+  <html lang="es">
 
   <head>
     <meta charset="utf-8">
@@ -19,6 +19,7 @@
 
     <!-- Custom fonts for this template -->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'customs.css' %}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template -->
@@ -33,7 +34,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      <ul class="navbar-nav bg-gray-700 sidebar sidebar-dark" >
+      <ul class="navbar-nav bg-gray-700 sidebar sidebar-dark back-img-log" >
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/index">
           <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-database"></i></div>
@@ -48,7 +49,7 @@
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
           <button class="btn btn-sm btn-info my-1 btn-block d-flex">
-            <a class="nav-link" href="{% url 'adm_clientes' %}">
+            <a class="nav-link" href="{% url 'admin_clients' %}">
               <i class="fas fa-fw fa-user"></i>
               <span>Clientes</span>
             </a>
@@ -81,7 +82,7 @@
 
         <li class="nav-item active">
           <button class="btn btn-sm btn-danger my-1 btn-block d-flex"> 
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'events_view' %}">
               <i class="fas fa-fw fa-star"></i>
               <span>Eventos</span>
             </a>
@@ -92,7 +93,7 @@
 
         <li class="nav-item active">
           <button class="btn btn-sm btn-secondary my-1 btn-block d-flex">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'projects_view' %}">
               <i class="fas fa-fw fa-lightbulb"></i>
               <span>Proyectos</span>
             </a>
@@ -100,15 +101,7 @@
             {% endblock %}
           </button>
         </li>
-      
-        <li class="nav-item active">
-          <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-lightbulb"></i>
-            <span>Permisos</span>
-            {% block active-perms %}
-            {% endblock %}
-          </a>
-        </li>
+
       </ul>
       <!-- End of Sidebar -->
     
@@ -118,40 +111,51 @@
         <div id="content">
           <!-- Topbar -->
           <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow" >
+            {% block top-message %}
             <a href="/indexcliente"><h1 class="h3 mb-0 text-gray-800">Bienvenido</h1></a>
-            <!-- Topbar Navbar -->
+            {% endblock %}
+            
             <ul class="navbar-nav ml-auto">  
+              <!-- Topbar Navbar -->
               {% block alerts %}
-              <!-- Nav Item - Alerts -->
+              <!-- Nav Item - Alerts--> 
               <li class="nav-item dropdown no-arrow mx-1">
                 <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="fas fa-bell fa-fw"></i>
                   <!-- Counter - Alerts -->
-                  <span class="badge badge-danger badge-counter">3+</span>
+                  <span class="badge badge-danger badge-counter">{{u_notify.1}}{{message}} </span>
                 </a>
 
                 <!-- Dropdown - Alerts -->
                 <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                   <h6 class="dropdown-header">Alerts Center</h6>
                   
-                  {% for x in u_notify %}
-                  <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="mr-3">
-                      <div class="icon-circle bg-primary">
-                        <i class="fas fa-file-alt text-white"></i>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <div class="small text-gray-500">December 12, 2019</div>
-                      <span class="font-weight-bold">{{x}}</span>
-                    </div>
-                  </a>  
+                  {% for x in u_notify.0 %}
+                    {% if x.content_object.get_type == 'event' %}
+                      <a class="dropdown-item d-flex align-items-center" href="{% url 'review_request' x.content_object.pk 0 %}">
+                    {% else  %}
+                      <a class="dropdown-item d-flex align-items-center" href="{% url 'review_request' x.content_object.pk 1 %}">
+                    {% endif %}
+                        <div class="mr-3">
+                          <div class="icon-circle bg-warning"> <i class="fas fa-fw fa-bell"></i> </div>
+                        </div>
+
+                        <div>
+                          {% if x.content_object.get_type == 'event' %}
+                            <div class="small text-gray-600">{{x.content_object.time_create}}</div>
+                            <span class="font-weight-bold">Solicitud: {{x.content_object.event_title}}</span>
+                          {% else  %}
+                            <div class="small text-gray-600">{{x.content_object.time_create}}</div>
+                            <span class="font-weight-bold">Solicitud: {{x.content_object.event_title}}</span>
+                          {% endif %}
+                        </div>
+                      </a>  
+                  
                   {% endfor %}  
                   <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                 </div>
               </li>
-              <!-- alerts-->
+              <!--alerts-->
               {% endblock %} 
             
 
@@ -221,16 +225,16 @@
         <div class="modal-content">
           
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <h5 class="modal-title" id="exampleModalLabel">¿Desea desconectarse?</h5>
             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
           
-          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+          <div class="modal-body">Presione "Salir" si esta listo para cerrar sesión</div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-            <form action="{% url 'salir' %}" method="post">
+            <form action="{% url 'exit' %}" method="post">
               {% csrf_token %}
               <button class="btn btn-primary">Salir</button>
             </form>
@@ -239,5 +243,19 @@
       </div>
     </div>
     <!-- end modal-->
+    <script>
+      /*
+      $(document).ready(function()
+        {
+          setInterval(function()
+          { 
+            $.post( "{% url 'notify'%}", 
+                  {"csrfmiddlewaretoken": "{{csrf_token}}",}, 
+                  function(response){console.log(response);}
+                  );
+          }, 3000);
+        }
+      );*/
+    </script>
   </body>
 </html>

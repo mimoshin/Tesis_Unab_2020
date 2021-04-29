@@ -1,0 +1,340 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block page-heading-content %}
+  <div class="d-sm-flex align-items-center mb-2 ">
+    <h2>Solicitud N°: {{kwargs.pk}}</h2>
+    <a class="btn btn-info btn-sm ml-auto" href="{% url 'requests_views' %}">Volver</a>
+    {% if kwargs.status != 'Rechazado' and kwargs.status != 'Aprobado'  %} 
+      <button class="btn btn-warning btn-sm mr-2 ml-2" id="obs">Observación</button>
+    {% endif %}    
+  </div>
+
+  {% if kwargs %}
+  <div class="row" style="background-color:khaki;">
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.468 12.37C12.758 11.226 11.195 10 8 10s-4.757 1.225-5.468 2.37A6.987 6.987 0 0 0 8 15a6.987 6.987 0 0 0 5.468-2.63z"/>
+          <path fill-rule="evenodd" d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+          <path fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
+        </svg> Autor:</h5>
+      <p>{{kwargs.petitioner.client_person.first_name}} {{kwargs.petitioner.client_person.last_name}} &nbsp;</p>
+    </div>
+
+    <div class="col-4 mt-2">
+      <h5>Club:</h5>
+      <p>{{kwargs.petitioner.corp}}</p>
+    </div>
+
+    <div class="col-4 mt-2">
+      <h5><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-event" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+        <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+      </svg>
+        Fecha de creacion:</h5>
+      <p>{{kwargs.time_create}}</p>
+    </div>
+  </div>
+    
+  <div class="row" style="background-color:lavender">
+    <div class="col-4 mt-2">
+      <h5>Titulo del Evento:</h5>
+      <p>{{kwargs.event_title}}</p>
+    </div>
+    <div class="col-4 mt-2">
+      <h5>Tipo de evento:</h5>
+      <p>{{kwargs.event_type}}</p>
+    </div>
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-event" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+          <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+        </svg> Fecha requerida:</h5>
+      <p>{{kwargs.event_date}}</p>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:khaki">
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
+          <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Hora inicio :</h5>
+      <p>{{kwargs.init_hour}}</p>
+    </div>
+    <div class="col-4 mt-2">
+      <h5>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
+          <path fill-rule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Hora fin :</h5>
+      <p>{{kwargs.finish_hour}}</p>
+    </div>
+    <div class="col-4 mt-2">
+      <h5 >Zona:</h5>
+      <p>{{kwargs.event_place}}</p>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:lavender">
+    <div class="col-4 mt-2">
+      <h5>Estado:</h5>
+      <p>{{kwargs.status}}</p>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:khaki">
+    <div class="col-12 mt-2">
+      <h5>Especificación:</h5>
+      <p>{{kwargs.specification}}</p>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if kwargs.status == 'Aprobado' or kwargs.status == 'Rechazado' or  kwargs.status == 'Cancelada' %}
+    <br>
+  {% else %}
+    <div class="row mt-4" id="ac_button">
+      <div class='col-4'></div>
+      <button class='btn btn-sm btn-success ar_button' value="0">Aprobar</button>
+      <div class='col-2'></div>
+      <button class='btn btn-sm btn-danger ar_button' value="1">Rechazar</button>
+    </div>
+  {% endif %}
+  <!--observation modal -->
+  <div class="modal fade" id="obs_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="h5_obs_modal">Ingrese su observación</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{% url 'review_request' kwargs.pk 0 %}">
+            {% csrf_token %}
+            <textarea class="form-control limit" name="observation" maxlength="300" rows="3" id="obs_text"></textarea>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-warning" >Generar</button>
+          </form> 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- event modal -->
+  <div class="modal fade" id="event_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Verificar disponibilidad </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="overflow-y: scroll;max-height: 300px;">
+          <table class="table_hours">
+            <thead>
+              <tr>
+                <th style="width: 130px;">Horario</th>
+                <th style="width: 80px;">Multicancha</th>
+                <th style="width: 80px;">Pista Atlética</th>
+                <th style="width: 80px;">Psicina</th>
+                <th style="width: 80px;">Cancha Sintetica</th>
+                <th style="width: 80px;">Gimnasio completo</th>
+                <th style="width: 80px;">Lugar externo</th>
+              </tr>
+            </thead>
+            <tbody class="body_hours">
+                <tr>
+                  <td class="table-info" style="text-align: center;"> Horas</td>
+
+                  <!--Multicancha-->
+                  <td class="table-warning"> </td>
+
+                  <!--Piscina-->
+                  <td class="table-warning"> </td>
+
+                  <!--Cancha síntetica-->
+                  <td class="table-warning"> </td>
+
+                  <!--Pista Atlética-->
+                  <td class="table-warning"> </td>
+
+                  <!--Gimnasio completo-->
+                  <td class="table-warning"> </td>
+              
+                  <!--Lugar externo-->
+                  <td class="table-warning"> </td>
+                </tr>
+              <!--End Day hour-->
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <div class="alert alert-success" role="alert" id="good_alert">
+            <h4 class="alert-heading">Enhorabuena</h4>
+            <p>El horario y zona deseada esta disponible, puede proceder a calendarizar el evento </p>
+          </div>
+          <div class="alert alert-danger" role="alert" id="bad_alert">
+            <h4 class="alert-heading">Malas noticias</h4>
+            <p>El horario y zona deseada no esta disponible, por lo cual no es posible calendarizar el evento </p>
+          </div>
+          <div>
+              <button type="button" class="btn btn-secondary" id="return" data-dismiss="modal">volver</button>
+              <button type="button" class="btn btn-success" id="question"> Comprobar </button>
+              <button type="submit" class="btn btn-primary" id="continue">Continuar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <style rel="stylesheet">
+    .table_hours{
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 5px;
+    }
+
+    .table_hours thead tr th{
+      text-align: center;
+    }
+    
+    .table_hours tbody tr td{
+      text-align: center;
+    }
+  </style>
+
+  <script type="text/javascript">
+    var one_split = ''
+    var button_con = 0;
+    $(document).ready(function(){
+      $('#continue').toggle();
+      $('#bad_alert').hide();
+      $('#good_alert').hide();
+      if('{{kwargs.status}}' == 'Necesita revision'){
+        $.post("{% url 'review_request' 0 0 %}".replace('0','{{kwargs.pk}}'),
+              {"estado":2,"csrfmiddlewaretoken": "{{csrf_token}}",},
+              function(response){
+                location.reload();
+              }); 
+        }
+    });
+
+    $('#obs').on('click',function(){
+      $('#obs_modal').modal('show');
+    });
+
+    $('.ar_button').on('click',function(){
+      if(this.value == 0){
+        $.post("{% url 'request_day' %}",{"pk_request":'{{kwargs.pk}}',"csrfmiddlewaretoken": "{{csrf_token}}",},
+          function(response){
+            one_split = response.split(';');
+            body = $('.body_hours');
+            text = '';
+            
+            for(x= 0;x<16;x++){
+              second_split = one_split[x].split(',');
+              text = text+'<tr><td class="table-info" id="'+x+'-0"style="text-align:center;">'+second_split[0].slice(2,-1)+'</td>';
+              for(y=1;y<7;y++){
+                if(second_split[y].includes('none')){
+                  text = text+'<td class="table-warning" id="'+x+'-'+y+'"><button class="btn"></button></td>';
+                }
+                else{
+                  text = text+'<td class="table-warning" id="'+x+'-'+y+'"><button class="btn">'+ second_split[y].slice(0,-1)+'</button></td>';
+                }
+              }
+            }
+          text = text+'</tr>';
+          $('.body_hours').html(text);
+        });
+        $('#event_modal').modal('show');
+      }
+      else if(this.value == 1){
+        $.post("{% url 'review_request' 0 0 %}".replace('0','{{kwargs.pk}}'),
+              {"estado":1,"csrfmiddlewaretoken": "{{csrf_token}}",},
+              function(response){
+                  location.reload();
+        }); 
+      }
+    });
+
+    $('#question').on('click',function(e){
+      init = '{{kwargs.init_hour}}'.split(' ');
+      finish = '{{kwargs.finish_hour}}'.split(' ');
+
+      if (init[1] == 'p.m.') {init = parseInt(init[0])+12;}
+
+      else {init = parseInt(init[0]);}
+
+      if (finish[1] == 'p.m.') {finish = parseInt(finish[0])+12;}
+
+      else {finish = parseInt(finish[0]);}
+
+      duration = finish-init;
+      index ='{{kwargs.event_place}}';
+      h_count = 0;
+      for(x=(init-8) ;x<(finish-8);x++){
+        second_split = one_split[x].split(',');
+        id_button = '#'+x+'-'+index;
+        if(second_split[index].includes('none')){
+            button = $('0'.replace(0,id_button));
+            button[0].className ='table-success';
+            h_count +=1;
+          }
+          else{
+            button = $('0'.replace(0,id_button));
+            button[0].className ='table-danger';
+          }
+        }
+      if(h_count == duration){
+        comprobe = $('#question');
+        contin = $('#continue');
+        comprobe.toggle();
+        contin.toggle();
+        button_con =1;
+        $('#good_alert').toggle();
+      }
+      else{
+        button_con = 2;
+        $('#bad_alert').toggle();
+        
+      }
+    });
+
+    $('#event_modal').on('hidden.bs.modal',function(e){
+      if(button_con==2){
+        $('#bad_alert').toggle();
+        button_con = 0;
+      }
+      if(button_con==1){
+        $('#question').toggle();
+        $('#continue').toggle();
+        $('#good_alert').toggle();
+        button_con = 0;
+      }
+    })
+    
+    $('#continue').on('click',function(e){
+      $.post("{% url 'entry_event'%}",
+              {'e_request':'{{kwargs.pk}}',"csrfmiddlewaretoken": "{{csrf_token}}",},
+              function(response){
+                location.reload();
+              });
+    });
+
+  </script>
+{% endblock %}
+
+{% block active-requests %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

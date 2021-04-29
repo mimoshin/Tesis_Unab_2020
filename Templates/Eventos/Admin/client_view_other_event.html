@@ -1,0 +1,192 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+{% block top-message %}
+  {% if kwargs %}
+    <div>
+      <h2>Evento: {{kwargs.event_title}}</kwargs></h2>
+    </div>
+  {% else %}
+    <div>
+      <h2>Evento:</kwargs></h2>
+    </div>
+  {% endif%}
+{% endblock%}
+
+{% block page-heading-content %}
+
+{% if kwargs %}
+  <!--Event-characteristicsc-->
+  <div class="container-fluid">
+    <div class="row mb-4"> 
+      <div class="col-9">
+        <table class="table_hours">
+          <thead>
+            <tr>
+              <th class="table-info">Estado</th>
+              <th class="table-warning" > {{kwargs.status}}</th>
+              <th class="table-info" >Hora inicio</th>
+              <td class="table-warning" > {{kwargs.init_hour}}</td>
+            </tr>
+            <tr>
+              <th class="table-info" style="width: 200px;">Fecha</th>
+              <th class="table-warning" style="text-align: center;"> {{kwargs.event_date}}</th>
+              <th class="table-info" style="width: 200px;">Hora fin</th>
+              <td class="table-warning" style="text-align: center;"> {{kwargs.finish_hour}}</td>
+            </tr>
+          </thead>
+          <!--<tbody></tbody>-->
+        </table>
+      </div>
+      <div class="col-3">
+        <a class="btn btn-info btn-sm float-sm-right ml-2" href="{% url 'events_view' %}">Volver</a>
+        {% if kwargs.status != 'Por realizar'  %} 
+          <button class="btn btn-warning btn-sm float-sm-right" id="obs">Observación </button>
+        {% endif %}  
+      </div>
+    </div>
+  </div>
+  <!--End-event-characteristicsc-->
+  
+  <div class="container">
+    <div class="d-sm-flex align-items-end ">
+      <div class="col-8 "><h4>Participantes inscritos</h4></div> 
+    </div>
+    {% endif %}
+
+    <table class="table_hours">
+       <div class="col-4"><h6 id='cupos'>Cupos disponible: 0 </h6></div>
+      <thead>
+        <tr>
+          <th class="table-info" style="width: 200px;">Nombre</th>
+          <th class="table-info" style="width: 200px;">Apellido</th>
+          <th class="table-info" style="width: 200px;">Edad</th>
+          <th class="table-info" style="width: 200px;">Estado</th>
+        </tr>
+      </thead>
+      <tbody id="">
+        {% if 'inscribed' %}
+          {% for person in inscribed%}
+          <tr>  
+              <td class="table-warning">{{person.first_name}}</td>
+              <td class="table-warning">{{person.last_name}}</td>
+              <td class="table-warning">{{person.age}}</td>
+              <td class="table-warning">{{person.status}}</td>
+          </tr>
+          {% empty %}
+            <tr>  
+              <td class="table-warning">----</td>
+              <td class="table-warning">----</td>
+              <td class="table-warning">----</td>
+              <td class="table-warning">----</td>
+            </tr>
+          {% endfor %}
+        {% endif%}
+      </tbody>
+    </table>
+  </div>
+  <div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+      {% if kwargs.ins_person < kwargs.max_person %}
+        <button type="button" class="btn btn-sm btn-success mt-2" data-toggle="modal" data-target="#insc_modal">Inscribir participante</button>
+      {% endif %}
+    </div>
+  </div>
+  
+  
+  
+  <!--observation modal -->
+  <div class="modal fade" id="obs_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="h5_obs_modal">Ingrese su observación</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="#">
+            {% csrf_token %}
+            <textarea class="form-control limit" name="observation" maxlength="300" rows="3" id="obs_text"></textarea>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-warning" >Generar</button>
+          </form> 
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end-observation-modal-->
+  
+  <!--inscription-modal -->
+  <div class="modal fade" id="insc_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header row">
+          <div class="col-8"><h5 class="modal-title">Inscribir Participante</h5></div>
+          <div class="col-1">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+        <div class="modal-body" style="overflow-y: scroll;max-height: 700px;" id="athletes_body">
+          <form class="user" method="post" action="{% url 'person_inscription' %}" autocomplete="off">
+            {% csrf_token %} 
+            <div class="row"> 
+              <div class="col-1"></div> 
+              <div class="form-group col-6"> 
+                <label for="first">Nombre </label> 
+                <input type="text" class="form-control" name="first_name" placeholder="Juanito" id="first"> 
+              </div> 
+              <div class="form-group col-4"> 
+                <label for="last">Apellido </label> 
+                <input type="text" class="form-control" name="last_name" placeholder="Perez" id="last"> 
+              </div> 
+            </div> 
+            <div class="row"> 
+              <div class="col-1"></div> 
+              <div class="form-group col-6"> 
+                <label for="ag">Edad </label> 
+                <input type="text" class="form-control" name="age" placeholder="20" id="ag"> 
+              </div> 
+              <div class="form-group col-4"> 
+                <label for="ema">Email </label> 
+                <input type="text" class="form-control" name="email" placeholder="jPerez@gmail.com" id="ema"> 
+              </div> 
+            </div> 
+            <div class="row"> 
+              <input type="hidden" name="id_event" value="{{kwargs.pk}}"> 
+              <div class="col-1"></div> 
+              <div class="col-4"> 
+                <button type="submit" class="btn btn-sm btn-primary mt-2">Inscribir</button> 
+              </div> 
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <!--Espacio disponible para alguna funcionalidad-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end-inscription-modal -->
+ 
+  <script type="text/javascript">
+    $(document).ready(function(){
+      if('{{kwargs}}' !== 'None'){
+        num = '{{kwargs.max_person}}' - '{{kwargs.ins_person}}';
+        cupos = 'Cupos disponibles: ' + num;
+        $('#cupos').html(cupos);
+      }
+    });
+    $('#obs').on('click',function(){
+      $('#obs_modal').modal('show');
+    });
+  </script>
+{% endblock %}
+
+{% block active-events %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

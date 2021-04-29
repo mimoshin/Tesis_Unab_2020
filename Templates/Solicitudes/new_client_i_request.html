@@ -4,22 +4,16 @@
 {% block head %}  
 {% endblock %}
 
-{% block title %}
-  <a href="/indexadmin"><h1 class="h3 mb-0 text-gray-800">Nueva Solicitud</h1></a>
-{% endblock %}
 
 {% block page-heading-content %}
-  
-  <!----hidden_info---->
-  <div class="d-flex" id="info_content">
-    <form method="post" action="{% url 'new_info_request' %}">
+  <!--form-->
+  <form class="user" method="post" action="{% url 'new_info_request' %}" autocomplete="off">
       {% csrf_token %}
-
       <div class="row">
         <div class="col-6">
           <div class="form-group">
-            <label for="">Asunto: </label>
-            <input type="text" name="info_title" placeholder="Titulo...">
+            <label for="AS">Asunto: </label>
+            <input type="text" class="form-control" name="info_title" placeholder="Asunto..." id="AS">
           </div>
         </div>
       </div>
@@ -28,7 +22,7 @@
         <div class="col-12"> 
           <div class="form-group">
             <label for="">Solicitud de informacion</label>
-            <textarea name="info_detail" cols="130" rows="10" placeholder="Escriba su consulta"></textarea>
+            <textarea class="form-control" name="info_detail" cols="130" rows="10" placeholder="Escriba su consulta"></textarea>
           </div>  
         </div>
       </div>
@@ -36,8 +30,23 @@
       <button type="submit" class ="btn btn-primary btn-user btn-block">Generar Solicitud</button>
       <hr>
     </form>
-  </div>
-  <!----end_hidden_info---->  
+    <!--end_form-->
+    
+    <script>    
+      $('form').on('submit',function(){
+        console.log('probando funcion')
+        data_form = $('form')[0];
+        submit = 0;
+        for(i=1;i<3;i++){
+         if(data_form[i].value !=0 ){
+           submit+=1;
+          }
+        }
+        console.log(submit)
+        if(submit == 2){return true;}
+        else{return false}
+      });
+    </script>
 {% endblock %}
 
 {% block active-requests %}

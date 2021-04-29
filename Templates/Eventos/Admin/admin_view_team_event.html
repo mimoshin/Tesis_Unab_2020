@@ -1,0 +1,140 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block top-message %}
+  {% if kwargs %}
+    <div>
+      <h2>Evento: {{kwargs.event_title}}</kwargs></h2>
+      <p>{{kwargs.max_athletes}}</p>
+    </div>
+  {% else %}
+    <div>
+      <h2>Evento:</kwargs></h2>
+    </div>
+  {% endif%}
+{% endblock%}
+
+
+{% block page-heading-content %}
+{% if kwargs %}
+  <!--Event-characteristicsc-->
+  <div class="container-fluid">
+    <div class="row mb-4"> 
+      <div class="col-9">
+        <table class="table_hours">
+          <thead>
+            <tr>
+              <th class="table-info">Estado</th>
+              <th class="table-warning" > {{kwargs.status}}</th>
+              <th class="table-info" >Hora inicio</th>
+              <td class="table-warning" > {{kwargs.init_hour}}</td>
+            </tr>
+            <tr>
+              <th class="table-info" style="width: 200px;">Fecha</th>
+              <th class="table-warning" style="text-align: center;"> {{kwargs.event_date}}</th>
+              <th class="table-info" style="width: 200px;">Hora fin</th>
+              <td class="table-warning" style="text-align: center;"> {{kwargs.finish_hour}}</td>
+            </tr>
+          </thead>
+          <!--<tbody></tbody>-->
+        </table>
+      </div>
+      <div class="col-3">
+        <a class="btn btn-info btn-sm float-sm-right ml-2" href="{% url 'events_view' %}">Volver</a>
+        {% if kwargs.status != 'Por realizar'  %} 
+          <button class="btn btn-warning btn-sm float-sm-right" id="obs">Observación </button>
+        {% endif %}  
+      </div>
+    </div>
+  </div>
+  <!--End-event-characteristicsc-->
+
+  <div class="container">
+    <div class="d-sm-flex align-items-end ">
+      <div class="col-8 "><h4>Equipos inscritos</h4></div> 
+    </div>
+
+    <table class="table_hours">
+      <div class="col-4"><h6 id='cupos'>Cupos disponible: 0 </h6></div>
+      <thead>
+        <tr>
+          <th class="table-info" style="width: 200px;">Nombre</th>
+          <th class="table-info" style="width: 200px;">Integrantes inscritos</th>
+          <th class="table-info" style="width: 200px;">Reservas inscritos</th>
+          <th style="width: 200px;"></th>
+        </tr>
+      </thead>
+      <tbody id="list_teams">
+        {% if 'inscribed' %}
+          {% for team in inscribed%}
+            <tr>  
+              <td class="table-warning">{{team.name}}</td>
+              <td class="table-warning">{{team.athletes}}</td>
+              <td class="table-warning">{{team.reserve}}</td>
+              <td><a type='button' class='btn btn-sm btn-success' href="{% url 'view_team' team.pk %}">Ver integrantes</a></td>
+            </tr>
+          {% empty %}
+            <tr>  
+              <td class="table-warning">----</td>
+              <td class="table-warning">----</td>
+              <td class="table-warning">----</td>
+              <td class="table-warning">----</td>
+            </tr>
+          {% endfor %}
+        {% endif%}          
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+      {% if kwargs.ins_teams < kwargs.max_teams %}
+        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#insc_modal">Inscribir equipo </button>
+      {% endif%}
+    </div>
+  </div>
+  {% endif %}
+
+  <!--observation modal -->
+  <div class="modal fade" id="obs_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="h5_obs_modal">Ingrese su observación</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>{{kwargs.observation}}</p>
+          <form method="POST" action="#">
+            {% csrf_token %}
+            <textarea class="form-control limit" name="observation" maxlength="300" rows="3" id="obs_text"></textarea>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-warning" >Generar</button>
+          </form> 
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end_observation_modal-->
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      if('{{kwargs}}' !== 'None'){        
+        num = '{{kwargs.max_teams}}' - '{{kwargs.ins_teams}}';
+        cupos = 'Cupos disponibles: ' + num;
+        $('#cupos').html(cupos);
+      }
+    });
+
+  $('#obs').on('click',function(){
+    $('#obs_modal').modal('show');
+  });
+</script>
+{% endblock %}
+
+{% block active-events %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

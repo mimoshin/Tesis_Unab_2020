@@ -1,0 +1,54 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+
+{% block page-heading-content %}
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-0 my-4">
+    <h1 class="h3 mb-0 text-gray-800">Registrar Clientes</h1>
+  </div>
+  
+  <form class='user' method="post" action="{% url 'register_client' %}">
+    {% csrf_token %}
+  
+    <div class="form-group">
+      <input type="text" class="form-control form-control-user" name="username" placeholder="Nombre de usuario">
+    </div>
+
+    <div class="form-group">
+      <input type="password" class="form-control form-control-user " name="password" placeholder="Contaseña">
+    </div>
+
+    <div class="form-group">
+      <input type="text" class="form-control form-control-user" name="first_name" placeholder="Nombre">
+    </div> 
+
+    <div class="form-group">
+      <input type="text" class="form-control form-control-user" name="last_name" placeholder="Apellido">
+    </div> 
+
+    <div class="form-group">
+      <input type="text" class="form-control form-control-user" name="email" placeholder="Correo Electronico">
+    </div> 
+
+    <div class="form-group">
+      <input type="text" class="form-control form-control-user" name="corp" placeholder="Institucion">
+    </div> 
+    
+    <div class="form-group">
+      <select name="type_corp">
+        <option value="0"selected disabled hidden> Seleccione tipo</option>
+        <option value="1">Club deportivo</option>
+        <option value="2">Empresa</option>
+        <option value="3">Particular</option>
+      </select>
+    </div> 
+
+    <button type="submit" class ="btn btn-primary btn-user btn-block">Registrar</button>
+    <hr>
+  </form>
+{% endblock %}
+
+{% block active-clients %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends 'base_client.html' %}
+{% load static %}
+
+{% block top-message %}
+  <h1>Inscribir equipo</h1>
+{% endblock %}
+
+
+{% block page-heading-content %}
+  <div class="container-fluid">
+    <div class="row mb-4"> 
+      <div class="col-9">  
+        <table class="table_hours">
+          <thead>
+            <tr>
+              <th class="table-info">Equipo</th>
+              <th class="table-warning" > {{kwargs.name}}</th>
+              <th class="table-info" >Estado</th>
+              <td class="table-warning" >{{kwargs.max_atheteles}} </td>
+            </tr>
+            <tr>
+              <th class="table-info" style="width: 200px;">Fecha</th>
+              <th class="table-warning" style="text-align: center;"> ---- </th>
+              <th class="table-info" style="width: 200px;">Hora fin</th>
+              <td class="table-warning" style="text-align: center;"> ---- </td>
+            </tr>
+          </thead>
+          <!--<tbody></tbody>-->
+        </table>
+      </div>
+      <div class="col-3">
+        <a class="btn btn-info btn-sm float-sm-right ml-2" href="{% url 'events_view' %}">Volver</a>
+      </div>
+    </div>
+  </div>
+  <!--End-event-characteristicsc-->
+
+  <div class="container row d-sm-flex">
+    <div class="col">
+      <div class="row">
+        <h3 class="ml-4">Titulares</h3>
+        
+      </div>
+      <div class="row">
+        <table class="table_hours">
+          <thead>
+            <tr>
+              <th style="width: 200px;">Nombre</th>
+              <th style="width: 200px;">Apellido</th>
+              <th style="width: 200px;">Edad</th>
+              <th style="width: 200px;">Email</th>
+            </tr>
+          </thead>
+          <tbody>            
+            {% for x in athletes %}
+              {% if x.position == 'Titular' %}
+                <tr>
+                  <td>{{x.first_name}}</td>
+                  <td>{{x.last_name}}</td>
+                  <td>{{x.age}}</td>
+                  <td>{{x.email}}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="row">
+        <h3 class="ml-4">Reservas</h3>
+      </div>
+      <div class="row">
+        <table class="table_hours">
+          <thead>
+            <tr>
+              <th style="width: 200px;">Nombre</th>
+              <th style="width: 200px;">Apellido</th>
+              <th style="width: 200px;">Edad</th>
+              <th style="width: 200px;">Email</th>
+            </tr>
+          </thead>
+          <tbody>            
+            <tr>
+              {% for x in athletes %}
+                {% if x.position == 'Reserva' %}
+                  <td>{{x.first_name}}</td>
+                  <td>{{x.last_name}</td>
+                  <td>{{x.age}}</td>
+                  <td>{{x.email}}/td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!--Athlete modal -->
+  <div class="modal fade" id="athlete_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="h5_obs_modal">Inscribir integrante del equipo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'team_athlete' %}">
+            {% csrf_token %}
+            <!-- first_name | last_name | age | email | status  | Team -->
+            <!--first_row-->
+            <div class="row">
+              <!-- Separator -->
+              <div class="col-1"></div>
+              <div class="form-group col-4">
+                <label for="1">Nombre</label>
+                <input type="text" class="form-control" name="first_name" placeholder="Fulano" id="1">        
+              </div>    
+              <div class="form-group col-4">
+                <label for="2">Apellido</label>
+                <input type="text" class="form-control" name="last_name" placeholder="De tales" id="2">        
+              </div>    
+            </div>
+            <!--end_first_row-->
+
+            <!--second_row-->
+            <div class="row">
+              <!-- Separator -->
+              <div class="col-1"></div>
+              <div class="form-group col-4">
+                <label for="3">Edad</label>
+                <input type="text" class="form-control" name="age" placeholder="25" id="3">        
+              </div>    
+              <div class="form-group col-4">
+                <label for="4">Apellido</label>
+                <input type="text" class="form-control" name="email" placeholder="fulano@gmail.com" id="4">        
+              </div>    
+              <input type="hidden" name="id_team" value='{{kwargs.pk}}'>
+              <input type="hidden" name="position" value='Titular'>
+            </div>
+            <!--end_second_row-->
+
+            <!--third_row-->
+            <div class="row">
+              <div class="col-8"></div>
+              <div class="col-4">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Inscribir</button>
+              </div>
+            </div>
+            <!--end_third_row-->
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Athlete modal -->
+  <div class="modal fade" id="reserve_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="h5_obs_modal">Inscribir integrante del equipo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'team_athlete' %}">
+            {% csrf_token %}
+            <!-- first_name | last_name | age | email | status  | Team -->
+            <!--first_row-->
+            <div class="row">
+              <!-- Separator -->
+              <div class="col-1"></div>
+              <div class="form-group col-4">
+                <label for="1">Nombre</label>
+                <input type="text" class="form-control" name="first_name" placeholder="Fulano" id="1">        
+              </div>    
+              <div class="form-group col-4">
+                <label for="2">Apellido</label>
+                <input type="text" class="form-control" name="last_name" placeholder="De tales" id="2">        
+              </div>    
+            </div>
+            <!--end_first_row-->
+
+            <!--second_row-->
+            <div class="row">
+              <!-- Separator -->
+              <div class="col-1"></div>
+              <div class="form-group col-4">
+                <label for="3">Edad</label>
+                <input type="text" class="form-control" name="age" placeholder="25" id="3">        
+              </div>    
+              <div class="form-group col-4">
+                <label for="4">Apellido</label>
+                <input type="text" class="form-control" name="email" placeholder="fulano@gmail.com" id="4">        
+              </div>    
+              <input type="hidden" name="id_team" value='{{kwargs.pk}}'>
+              <input type="hidden" name="position" value='Reserva'>
+            </div>
+            <!--end_second_row-->
+
+            <!--third_row-->
+            <div class="row">
+              <div class="col-8"></div>
+              <div class="col-4">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Inscribir</button>
+              </div>
+            </div>
+            <!--end_third_row-->
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block active-events %}
+  <i class="fas fa-fw fa-circle "></i>
+{% endblock %}

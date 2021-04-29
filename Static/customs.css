@@ -1,0 +1,90 @@
+.head-danger{
+    background-color: #e74a3b;;
+}
+
+.head-info{
+    background-color: #36b9cc;
+}
+
+.head-secondary{
+    background-color: #858796;
+}
+
+.head-success{
+    background-color: #1cc88a;
+}
+
+.head-warning{
+    background-color: #f6c23e;
+}
+
+.all-white th{
+    color:rgba(255, 255, 255, 0.850);
+}
+
+/*CALENDAR MODULE*/
+.table_hours{
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 5px;
+  }
+
+  .table_hours thead tr th{
+    text-align: center;
+  }
+  
+  .table_hours tbody tr td{
+    text-align: center;    
+  }
+
+  .calendar table{
+    table-layout: fixed;
+    width: 101%;
+  }
+
+  .calendar tr {
+    border: 0.5px solid black;
+    height: 50px;
+    text-align: center;
+  }
+
+  .calendar td {
+    border: 0.5px solid black;
+    height: 130px;
+    text-align:left;
+    vertical-align: top; 
+    background-color:rgb(226, 231, 238); 
+  }
+
+  .calendar td ul li{
+    font-size:12px;
+    list-style: none;
+  }
+
+  .no_point li{
+    list-style: none;
+  }
+
+  .calendar.num button{
+      font-size: 13px;
+  }
+
+  .body_hours tr td{
+    font-size: 15px;
+  }
+
+  .body_hours tr td button{
+    font-size: 12px;
+  }
+
+  .back-img-log{
+    background-image: url(imge.jpg);
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;    
+  }
+
+  .color-black{
+    color:black
+  }
